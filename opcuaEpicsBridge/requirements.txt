@@ -1,0 +1,5 @@
+pyepics==3.4.3
+opcua
+cryptography
+softioc
+cothread

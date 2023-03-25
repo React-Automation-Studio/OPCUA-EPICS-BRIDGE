@@ -1,0 +1,39 @@
+{
+    "subscriptions": [
+        {
+            "name": "sweeper1",
+            "url": "opc.tcp://172.16.5.140:4840",
+            "subscriptionRate": 100,
+            "pvs": [
+                {
+                    "opcuaName": "ns=4;s=GVL001.rFrequency",
+                    "epicsName": "SAIF:TS:Sweeper1:rFrequency",
+                    "epicsType": "AO",
+                    "opcuaType": "Float"
+                },
+                {
+                    "opcuaName": "ns=4;s=GVL001.iAmplitudeOROC",
+                    "epicsName": "SAIF:TS:Sweeper1:iAmplitudeOROC",
+                    "epicsType": "AO",
+                    "opcuaType": "Int16"
+                },
+                {
+                    "opcuaName": "ns=4;s=GVL001.bXenable",
+                    "epicsName": "SAIF:TS:Sweeper1:bXenable",
+                    "epicsType": "BO",
+                    "opcuaType": "Boolean",
+                    "epicsZNAM": "False",
+                    "epicsONAM": "True"
+                },
+                {
+                    "opcuaName": "ns=4;s=GVL001.bXAmplifierEnable",
+                    "epicsName": "SAIF:TS:Sweeper1:bXAmplifierEnable",
+                    "epicsType": "BO",
+                    "opcuaType": "Boolean",
+                    "epicsZNAM": "False",
+                    "epicsONAM": "True"
+                }
+            ]
+        }
+    ]
+}

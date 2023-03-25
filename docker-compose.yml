@@ -1,0 +1,17 @@
+version: '3.2'
+services:
+  opcuapepicsbridge:
+    build:
+      context: ./
+      dockerfile: docker/opcuaEpicsBridge/Dockerfile
+    restart: always
+    network_mode: host
+    tty: true
+    stdin_open: true
+    env_file: .env
+    # environment:
+    volumes:
+      - ./certificates:/certificates/
+      - ./config:/bridge/config
+      
+  
