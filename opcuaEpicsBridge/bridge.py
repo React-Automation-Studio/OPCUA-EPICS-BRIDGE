@@ -4,8 +4,7 @@ import logging
 import time
 import os
 import json
-from opcua import Client
-from opcua import ua
+from asyncua.sync import Client,ua
 from softioc import softioc, builder
 import cothread
 from functools import partial
@@ -187,6 +186,8 @@ if __name__ == "__main__":
     
     builder.LoadDatabase()
     softioc.iocInit()
+    softioc.dbgrep("*")
+    print("here")
     try:
         
         while True:
