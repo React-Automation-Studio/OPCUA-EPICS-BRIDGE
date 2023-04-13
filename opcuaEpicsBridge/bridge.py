@@ -8,22 +8,7 @@ from asyncua.sync import Client,ua
 from softioc import softioc, builder
 import cothread
 from functools import partial
-
-
-
-def loadConfig():
-    try:
-        path='config/config.json'
-        
-        with open(path) as json_file:
-            data = json.load(json_file)
-            
-            return data
-    except:
-        print("Error: Can't load file config.json")
-        return None
-
- 
+from dbtoolspy import load_template_file, load_database_file
 
 class SubHandler(object):
 
@@ -35,16 +20,17 @@ class SubHandler(object):
     """
 
     def datachange_notification(self, node, val, data):
-        print("client Name:",self.clientName)
-        print("client Url:",self.clientUrl)
-        print("client Node:", node)
-        print("client val:", val)
-        # opcuaClient=self.clients[self.clientUrl]
         epicsName=self.clients[self.clientName]["opcuaToEpicsNames"][str(node)]
-        print("epics name",epicsName)
+        if self.debug:
+            print("client Name:",self.clientName)
+            print("client Url:",self.clientUrl)
+            print("client Node:", node)
+            print("client val:", val)
+            print("epics name",epicsName)
         self.epicsPvs[epicsName].set(val)
     def event_notification(self, event):
-        print("Python: New event", event)
+        if self.debug:
+            print("Python: New event", event)
     def setClientNameAndUrl(self,name,url):
         self.clientName=name
         self.clientUrl=url
@@ -52,6 +38,8 @@ class SubHandler(object):
         self.clients=clients
     def setEpicsPvs(self,epicsPvs):
         self.epicsPvs=epicsPvs
+    def setDebug(self,debug):
+        self.debug=debug
         
 
 if __name__ == "__main__":
@@ -104,7 +92,6 @@ if __name__ == "__main__":
                         
         else:
             newValue=str(val)  
-            print(f'xxx newValue: {newValue} current value: {currentValue}')
             if newValue!=str(currentValue):
                 if opcuaType=='Float':
                     dv = ua.DataValue(ua.Variant(float(newValue), ua.VariantType.Float))
@@ -121,7 +108,6 @@ if __name__ == "__main__":
                 else:
                     print("incorrect opcua type")
                 
-        #     var.set_value(1)
 
 
         print("on_epics_pv_update opcua currentValue:",currentValue)
@@ -129,65 +115,82 @@ if __name__ == "__main__":
     clients={}
     epicsPvs={}
     logging.basicConfig(level=logging.WARNING)
-    config=loadConfig()
-    print(str(config))
-    # builder.SetDeviceName("")
+   
     
-    
-    for client in config["subscriptions"]:  
+
+    try:
+        debug = os.getenv("debug", False)=="True"
+        name = os.getenv("name", None)
+        url = os.getenv("url", None)
         try:
-            name=client["name"]
-            url=client["url"]
+            subscriptionRate = int(os.environ["subscriptionRate"])
+        except:
+            subscriptionRate = 1000
+        db=load_database_file("bridge.db")
+        
+        clients[name]={}
+        opcuaClient=clients[name]
+        opcuaClient["client"]=Client(url)
+        
+        # opcuaClient["client"].set_security_string("Basic256Sha256,SignAndEncrypt,../certificates/my_cert.der,../certificates/my_private_key.pem")
+        opcuaClient["client"].connect()
+        opcuaClient["handler"] = SubHandler()
+        opcuaClient["handler"].setClientNameAndUrl(name,url)
+        opcuaClient["handler"].setClients(clients)
+        opcuaClient["handler"].setEpicsPvs(epicsPvs)
+        opcuaClient["handler"].setDebug(debug)
 
-            subscriptionRate=client["subscriptionRate"]
-            clients[name]={}
-            opcuaClient=clients[name]
-            opcuaClient["client"]=Client(url)
-            
-            # opcuaClient["client"].set_security_string("Basic256Sha256,SignAndEncrypt,../certificates/my_cert.der,../certificates/my_private_key.pem")
-            opcuaClient["client"].connect()
-            opcuaClient["handler"] = SubHandler()
-            opcuaClient["handler"].setClientNameAndUrl(name,url)
-            opcuaClient["handler"].setClients(clients)
-            opcuaClient["handler"].setEpicsPvs(epicsPvs)
-            opcuaClient["sub"] = opcuaClient["client"].create_subscription(subscriptionRate, opcuaClient["handler"])
-            opcuaClient["opcuaToEpicsNames"]={}
-            opcuaClient["epicsToOpcuaNames"]={}
-            for pv in client["pvs"]:
-                try:
-                    opcuaName=pv["opcuaName"]
-                    epicsPvName=pv["epicsName"]
-                    
-                    opcuaClient["opcuaToEpicsNames"][opcuaName]=epicsPvName
-                    opcuaClient["epicsToOpcuaNames"][epicsPvName]=opcuaName
-                    epicsType=pv["epicsType"]
-                    opcuaType=pv["opcuaType"]
-                    if "AI" in epicsType:
-                        epicsPvs[epicsPvName]=builder.aOut(epicsPvName)
+        
+        opcuaClient["sub"] = opcuaClient["client"].create_subscription(subscriptionRate, opcuaClient["handler"])
+        opcuaClient["opcuaToEpicsNames"]={}
+        opcuaClient["epicsToOpcuaNames"]={}
+        
+        for record in db.values():
+            epicsType=record.fields["DTYP"]
+            opcuaName=str(record.fields["OPCUA_NAME"])
+            epicsPvName=str(record.name)
+            opcuaClient["opcuaToEpicsNames"][str(opcuaName)]=str(epicsPvName)
+            opcuaClient["epicsToOpcuaNames"][str(epicsPvName)]=str(opcuaName)
+            epicsType=str(record.rtyp).upper()
+            opcuaType=str(record.fields["OPCUA_TYPE"])
+            if "AI" in epicsType:
+                fields={}
+                for field in record.fields:
+                    upper=str(field).upper()
+                    if upper in ["ZNAM","ONAM","DESC","EGU","HOPR","LOPR","PREC"]:
+                        fields[upper]=record.fields[field]
+                epicsPvs[epicsPvName]=builder.aIn(epicsPvName,**fields)
 
-                    if "AO" in epicsType:
-                        epicsPvs[epicsPvName]=builder.aOut(epicsPvName,on_update=partial(on_epics_pv_update,opcuaClientName=name,epicsPvName=epicsPvName,epicsType=epicsType,opcuaName=opcuaName,opcuaType=opcuaType,opcuaClients=clients))
+            if "AO" in epicsType:
+                epicsPvs[epicsPvName]=builder.aOut(epicsPvName,on_update=partial(on_epics_pv_update,opcuaClientName=name,epicsPvName=epicsPvName,epicsType=epicsType,opcuaName=opcuaName,opcuaType=opcuaType,opcuaClients=clients))
 
-                    elif "BO" in epicsType:
-                        ZNAM=pv["epicsZNAM"] if pv["epicsZNAM"] else None
-                        ONAM=pv["epicsONAM"] if pv["epicsONAM"] else None
-                        epicsPvs[epicsPvName]=builder.boolOut(epicsPvName,ZNAM=ZNAM,ONAM=ONAM,on_update=partial(on_epics_pv_update,opcuaClientName=name,epicsPvName=epicsPvName,epicsType=epicsType,ZNAM=ZNAM,ONAM=ONAM,opcuaName=opcuaName,opcuaType=opcuaType,opcuaClients=clients))
-                    elif "BI" in epicsType:
-                        ZNAM=pv["epicsZNAM"] if pv["epicsZNAM"] else None
-                        ONAM=pv["epicsONAM"] if pv["epicsONAM"] else None
-                        epicsPvs[epicsPvName]=builder.boolIn(epicsPvName,ZNAM=ZNAM,ONAM=ONAM)    
-                    print("opcuaName",opcuaName)
-                    opcuaClient["sub"].subscribe_data_change(opcuaClient["client"].get_node(opcuaName))
-                    
-                except Exception as e:
-                    print("e1",e)
-        except Exception as e:
-            print("efinal",e)
+            elif "BO" in epicsType:
+                ZNAM=record.fields["ZNAM"] if record.fields["ZNAM"] else None
+                ONAM=record.fields["ONAM"] if record.fields["ONAM"] else None
+                epicsPvs[epicsPvName]=builder.boolOut(epicsPvName,ZNAM=ZNAM,ONAM=ONAM,on_update=partial(on_epics_pv_update,opcuaClientName=name,epicsPvName=epicsPvName,epicsType=epicsType,ZNAM=ZNAM,ONAM=ONAM,opcuaName=opcuaName,opcuaType=opcuaType,opcuaClients=clients))
+            elif "BI" in epicsType:
+                ZNAM=record.fields["ZNAM"] if record.fields["ZNAM"] else None
+                ONAM=record.fields["ONAM"] if record.fields["ONAM"] else None
+                epicsPvs[epicsPvName]=builder.boolIn(epicsPvName,ZNAM=ZNAM,ONAM=ONAM)    
+            opcuaClient["sub"].subscribe_data_change(opcuaClient["client"].get_node(opcuaName))
+        # except Exception as e:
+        #     print("e1",e)
+    except Exception as e:
+        print("exception",e)
+        exit(1)
     
+    print(str(opcuaClient["opcuaToEpicsNames"]))
+    print(str(opcuaClient["epicsToOpcuaNames"]))
+    # softioc.dbLoadDatabase("test.db")
     builder.LoadDatabase()
     softioc.iocInit()
+    print("EPICS OPCUA bridge loaded")
+    print(F"OPCUA HOST URL: {url}")
+    
+    print("\nThe following bridge PVs are loaded:\n")
+
     softioc.dbgrep("*")
-    print("here")
+    print("\n")
     try:
         
         while True:

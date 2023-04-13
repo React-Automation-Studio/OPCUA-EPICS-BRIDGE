@@ -1,6 +1,3 @@
 .git*
-node_modules/
-frontendServer/node_modules/
-dist/
-venv/
+
 

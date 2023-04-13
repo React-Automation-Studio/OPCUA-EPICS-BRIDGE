@@ -9,9 +9,13 @@ services:
     tty: true
     stdin_open: true
     env_file: .env
-    # environment:
+    environment:
+      - name=OpcuaTest1
+      - url=opc.tcp://0.0.0.0:4840
+      - subscriptionRate=1000
+      # - debug=True
     volumes:
       - ./certificates:/certificates/
-      - ./config:/bridge/config
+      - ./db/test.db:/bridge/bridge.db
       
   

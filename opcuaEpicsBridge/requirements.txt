@@ -1,4 +1,3 @@
-# pyepics==3.4.3
 asyncio
 asyncua
 cryptography

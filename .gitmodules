@@ -1,0 +1,3 @@
+[submodule "dbtoolspy"]
+	path = dbtoolspy
+	url = git@github.com:paulscherrerinstitute/dbtoolspy.git
