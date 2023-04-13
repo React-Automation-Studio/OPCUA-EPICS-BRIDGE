@@ -105,6 +105,7 @@ if __name__ == "__main__":
                         
         else:
             newValue=str(val)  
+            print(f'xxx newValue: {newValue} current value: {currentValue}')
             if newValue!=str(currentValue):
                 if opcuaType=='Float':
                     dv = ua.DataValue(ua.Variant(float(newValue), ua.VariantType.Float))
@@ -114,6 +115,9 @@ if __name__ == "__main__":
                     var.set_value(dv)
                 elif opcuaType=='Int32':
                     dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.Int32))
+                    var.set_value(dv)
+                elif opcuaType=='Int64':
+                    dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.Int64))
                     var.set_value(dv)
                 else:
                     print("incorrect opcua type")
@@ -141,7 +145,7 @@ if __name__ == "__main__":
             opcuaClient=clients[name]
             opcuaClient["client"]=Client(url)
             
-            opcuaClient["client"].set_security_string("Basic256Sha256,SignAndEncrypt,../certificates/my_cert.der,../certificates/my_private_key.pem")
+            # opcuaClient["client"].set_security_string("Basic256Sha256,SignAndEncrypt,../certificates/my_cert.der,../certificates/my_private_key.pem")
             opcuaClient["client"].connect()
             opcuaClient["handler"] = SubHandler()
             opcuaClient["handler"].setClientNameAndUrl(name,url)
@@ -159,6 +163,9 @@ if __name__ == "__main__":
                     opcuaClient["epicsToOpcuaNames"][epicsPvName]=opcuaName
                     epicsType=pv["epicsType"]
                     opcuaType=pv["opcuaType"]
+                    if "AI" in epicsType:
+                        epicsPvs[epicsPvName]=builder.aOut(epicsPvName)
+
                     if "AO" in epicsType:
                         epicsPvs[epicsPvName]=builder.aOut(epicsPvName,on_update=partial(on_epics_pv_update,opcuaClientName=name,epicsPvName=epicsPvName,epicsType=epicsType,opcuaName=opcuaName,opcuaType=opcuaType,opcuaClients=clients))
 
@@ -169,13 +176,14 @@ if __name__ == "__main__":
                     elif "BI" in epicsType:
                         ZNAM=pv["epicsZNAM"] if pv["epicsZNAM"] else None
                         ONAM=pv["epicsONAM"] if pv["epicsONAM"] else None
-                        epicsPvs[epicsPvName]=builder.boolIn(epicsPvName,ZNAM=ZNAM,ONAM=ONAM,on_update=partial(on_epics_pv_update,opcuaClientName=name,epicsPvName=epicsPvName,epicsType=epicsType,ZNAM=ZNAM,ONAM=ONAM,opcuaName=opcuaName,opcuaType=opcuaType,opcuaClients=clients))    
+                        epicsPvs[epicsPvName]=builder.boolIn(epicsPvName,ZNAM=ZNAM,ONAM=ONAM)    
+                    print("opcuaName",opcuaName)
                     opcuaClient["sub"].subscribe_data_change(opcuaClient["client"].get_node(opcuaName))
                     
                 except Exception as e:
-                    print(e)
+                    print("e1",e)
         except Exception as e:
-            print(e)
+            print("efinal",e)
     
     builder.LoadDatabase()
     softioc.iocInit()

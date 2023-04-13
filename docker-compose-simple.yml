@@ -1,0 +1,31 @@
+version: '3.2'
+services:
+  opcuasimpleclient:
+    build:
+      context: ./
+      dockerfile: docker/opcuaSimple/Dockerfile
+    restart: always
+    network_mode: host
+    tty: true
+    stdin_open: true
+    command: "/bin/sh -c 'python client-minimal.py;'"
+    env_file: .env
+    # environment:
+    volumes:
+      - ./certificates:/certificates/
+  opcuasimpleserver:
+    build:
+      context: ./
+      dockerfile: docker/opcuaSimple/Dockerfile
+    restart: always
+    network_mode: host
+    tty: true
+    stdin_open: true
+    command: "/bin/sh -c 'python server-minimal.py;'"
+    env_file: .env
+    # environment:
+    volumes:
+      - ./certificates:/certificates/
+    
+      
+  
