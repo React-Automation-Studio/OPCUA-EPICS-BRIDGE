@@ -1,5 +1,6 @@
-pyepics==3.4.3
-opcua
+# pyepics==3.4.3
+asyncio
+asyncua
 cryptography
 softioc
 cothread
