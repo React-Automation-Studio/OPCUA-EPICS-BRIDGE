@@ -27,7 +27,19 @@ class SubHandler(object):
             print("client Node:", node)
             print("client val:", val)
             print("epics name",epicsName)
-        self.epicsPvs[epicsName].set(val)
+            print(str(self.epicsPvs[epicsName]["epicsType"]))
+        if self.epicsPvs[epicsName]["initialized"]:
+
+            if self.epicsPvs[epicsName]["epicsType"] in ["AI","BI"]:
+                if self.debug:
+                    print("val:", val)
+                    print("val type:", type(val))
+                    print("val name:", epicsName)
+                self.epicsPvs[epicsName]["pv"].set(val)
+        else:
+            self.epicsPvs[epicsName]["pv"].set(val)
+            self.epicsPvs[epicsName]["initialized"]=True
+
     def event_notification(self, event):
         if self.debug:
             print("Python: New event", event)
@@ -43,58 +55,33 @@ class SubHandler(object):
         
 
 if __name__ == "__main__":
-    def on_epics_pv_update(val,opcuaClientName,epicsPvName,epicsType,opcuaType,opcuaName,opcuaClients,ZNAM=None,ONAM=None):
-        print("on_epics_pv_update val:",val)
-        print("on_epics_pv_update clientName:",opcuaClientName)
-        print("on_epics_pv_update epicsPvName:",epicsPvName)
-        print("on_epics_pv_update epicsType:",epicsType)
-        
+    def on_epics_pv_update(val,opcuaClientName,epicsPvName,epicsType,opcuaType,opcuaName,opcuaClients,ZNAM=None,ONAM=None,debug=None,**kwargs):
+        if debug:
+            print("on_epics_pv_update val:",val)
+            print("on_epics_pv_update clientName:",opcuaClientName)
+            print("on_epics_pv_update epicsPvName:",epicsPvName)
+            print("on_epics_pv_update epicsType:",epicsType)
+            
         client=opcuaClients[opcuaClientName]["client"]
         var=client.get_node(opcuaName)
         
         currentValue=var.get_value()
+        
         if "BO" in epicsType:
-            if ZNAM:
-                if ONAM:
-                    if int(val)==1:
-                        newValue=str(ONAM)
-                    else:
-                        newValue=str(ZNAM)
-                    if newValue!=str(currentValue):
-                        dv = ua.DataValue(ua.Variant(newValue=='True', ua.VariantType.Boolean))
-                        var.set_value(dv)
-                else:
-                    if newValue!=str(currentValue):
-                        dv = ua.DataValue(ua.Variant(newValue=='1', ua.VariantType.Boolean))
-                        var.set_value(dv)  
-            else:
-                if newValue!=str(currentValue):
-                    dv = ua.DataValue(ua.Variant(newValue=='0', ua.VariantType.Boolean))
-                    var.set_value(dv)
-        elif "BI" in epicsType:
-            if ZNAM:
-                if ONAM:
-                    if int(val)==1:
-                        newValue=str(ONAM)
-                    else:
-                        newValue=str(ZNAM)
-                    if newValue!=str(currentValue):
-                        dv = ua.DataValue(ua.Variant(newValue=='True', ua.VariantType.Boolean))
-                        var.set_value(dv)
-                else:
-                    if newValue!=str(currentValue):
-                        dv = ua.DataValue(ua.Variant(newValue=='1', ua.VariantType.Boolean))
-                        var.set_value(dv)  
-            else:
-                if newValue!=str(currentValue):
-                    dv = ua.DataValue(ua.Variant(newValue=='0', ua.VariantType.Boolean))
-                    var.set_value(dv)    
+            x=int(val)==1
+            # print("val,x",val,x)
+            dv = ua.DataValue(ua.Variant(int(val)==1, ua.VariantType.Boolean))
+            var.set_value(dv)
+       
                         
         else:
             newValue=str(val)  
             if newValue!=str(currentValue):
                 if opcuaType=='Float':
                     dv = ua.DataValue(ua.Variant(float(newValue), ua.VariantType.Float))
+                    var.set_value(dv)
+                elif opcuaType=='Double':
+                    dv = ua.DataValue(ua.Variant(float(newValue), ua.VariantType.Double))
                     var.set_value(dv)
                 elif opcuaType=='Int16':
                     dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.Int16))
@@ -105,12 +92,15 @@ if __name__ == "__main__":
                 elif opcuaType=='Int64':
                     dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.Int64))
                     var.set_value(dv)
+                elif opcuaType=='Byte':
+                    dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.Int16))
+                    var.set_value(dv)
                 else:
                     print("incorrect opcua type")
                 
-
-
-        print("on_epics_pv_update opcua currentValue:",currentValue)
+        # cothread.Sleep(1)   
+        if debug:
+            print(f"on_epics_pv_update pv: {epicsPvName} opcua currentValue: {currentValue}")
         
     clients={}
     epicsPvs={}
@@ -153,25 +143,46 @@ if __name__ == "__main__":
             opcuaClient["epicsToOpcuaNames"][str(epicsPvName)]=str(opcuaName)
             epicsType=str(record.rtyp).upper()
             opcuaType=str(record.fields["OPCUA_TYPE"])
+            epicsPvs[epicsPvName]={}
+            epicsPvs[epicsPvName]["initialized"]=False
+                
             if "AI" in epicsType:
                 fields={}
                 for field in record.fields:
                     upper=str(field).upper()
                     if upper in ["ZNAM","ONAM","DESC","EGU","HOPR","LOPR","PREC"]:
                         fields[upper]=record.fields[field]
-                epicsPvs[epicsPvName]=builder.aIn(epicsPvName,**fields)
+                
+                epicsPvs[epicsPvName]["pv"]=builder.aIn(epicsPvName,**fields)
+                epicsPvs[epicsPvName]["epicsType"]="AI"
+                
 
             if "AO" in epicsType:
-                epicsPvs[epicsPvName]=builder.aOut(epicsPvName,on_update=partial(on_epics_pv_update,opcuaClientName=name,epicsPvName=epicsPvName,epicsType=epicsType,opcuaName=opcuaName,opcuaType=opcuaType,opcuaClients=clients))
+                fields={}
+                for field in record.fields:
+                    upper=str(field).upper()
+                    if upper in ["ZNAM","ONAM","DESC","EGU","HOPR","LOPR","PREC"]:
+                        fields[upper]=record.fields[field]
+                epicsPvs[epicsPvName]["pv"]=builder.aOut(epicsPvName,on_update=partial(on_epics_pv_update,opcuaClientName=name,epicsPvName=epicsPvName,epicsType=epicsType,opcuaName=opcuaName,opcuaType=opcuaType,opcuaClients=clients,debug=debug,**fields),**fields)
+                epicsPvs[epicsPvName]["epicsType"]="AO"
 
             elif "BO" in epicsType:
-                ZNAM=record.fields["ZNAM"] if record.fields["ZNAM"] else None
-                ONAM=record.fields["ONAM"] if record.fields["ONAM"] else None
-                epicsPvs[epicsPvName]=builder.boolOut(epicsPvName,ZNAM=ZNAM,ONAM=ONAM,on_update=partial(on_epics_pv_update,opcuaClientName=name,epicsPvName=epicsPvName,epicsType=epicsType,ZNAM=ZNAM,ONAM=ONAM,opcuaName=opcuaName,opcuaType=opcuaType,opcuaClients=clients))
+                fields={}
+                for field in record.fields:
+                    upper=str(field).upper()
+                    if upper in ["ZNAM","ONAM","DESC","EGU","HOPR","LOPR","PREC"]:
+                        fields[upper]=record.fields[field]
+                epicsPvs[epicsPvName]["pv"]=builder.boolOut(epicsPvName,on_update=partial(on_epics_pv_update,opcuaClientName=name,epicsPvName=epicsPvName,epicsType=epicsType,opcuaName=opcuaName,opcuaType=opcuaType,opcuaClients=clients,**fields),**fields)
+                epicsPvs[epicsPvName]["epicsType"]="BO"
             elif "BI" in epicsType:
-                ZNAM=record.fields["ZNAM"] if record.fields["ZNAM"] else None
-                ONAM=record.fields["ONAM"] if record.fields["ONAM"] else None
-                epicsPvs[epicsPvName]=builder.boolIn(epicsPvName,ZNAM=ZNAM,ONAM=ONAM)    
+                
+                fields={}
+                for field in record.fields:
+                    upper=str(field).upper()
+                    if upper in ["ZNAM","ONAM","DESC","EGU","HOPR","LOPR","PREC"]:
+                        fields[upper]=record.fields[field]
+                epicsPvs[epicsPvName]["pv"]=builder.boolIn(epicsPvName,**fields)
+                epicsPvs[epicsPvName]["epicsType"]="BI"    
             opcuaClient["sub"].subscribe_data_change(opcuaClient["client"].get_node(opcuaName))
         # except Exception as e:
         #     print("e1",e)
