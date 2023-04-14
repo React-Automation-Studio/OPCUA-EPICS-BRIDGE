@@ -16,32 +16,38 @@ async def main():
 
         # Get the variable node for read / write
         var = await client.nodes.root.get_child(
-            ["0:Objects", f"{nsidx}:MyObject", f"{nsidx}:MyVariable"]
+            ["0:Objects", f"{nsidx}:OpcuaTests", f"{nsidx}:AiInt64_1"]
         )
         var2 = await client.nodes.root.get_child(
-            ["0:Objects", f"{nsidx}:MyObject", f"{nsidx}:MyVariable2"]
+            ["0:Objects", f"{nsidx}:OpcuaTests", f"{nsidx}:AiInt64_2"]
+        )
+
+        var3 = await client.nodes.root.get_child(
+            ["0:Objects", f"{nsidx}:OpcuaTests", f"{nsidx}:Bi2"]
         )
         value = await var.read_value()
-        print(f"Value of MyVariable ({var}): {value}")
+        print(f"Value of AiInt64_1 ({var}): {value}")
 
         value2 = await var2.read_value()
-        print(f"Value of MyVariable2 ({var2}): {value2}")
+        print(f"Value of AiInt64_2 ({var2}): {value2}")
         new_value = value- 50
-        print(f"Setting value of MyVariable to {new_value} ...")
+        print(f"Setting value of AiInt64_1 to {new_value} ...")
         await var.write_value(new_value)
         # res = await client.nodes.objects.call_method(f"{nsidx}:ServerMethod", 5)
 
         while(1):
             value = await var.read_value()
             value2 = await var2.read_value()
-            print(f"Value of MyVariable ({var}): {value}")
-            print(f"Value of MyVariable2 ({var2}): {value2}")
+            print(f"Value of AiInt64_1 ({var}): {value}")
+            print(f"Value of AiInt64_2 ({var2}): {value2}")
             new_value = value +1
             new_value2 = value2 +1
-            print(f"Setting value of MyVariable to {new_value} ...")
+            print(f"Setting value of AiInt64_1 to {new_value} ...")
             await var.write_value(new_value)
-            print(f"Setting value of MyVariable to {new_value2} ...")
+            print(f"Setting value of AiInt64_1 to {new_value2} ...")
             await var2.write_value(new_value2)
+            value3 = await var3.read_value()
+            await var3.write_value(not value3)
             # # Calling a method
             # res = await client.nodes.objects.call_method(f"{nsidx}:ServerMethod", 5)
             # print(f"Calling ServerMethod returned {res}")

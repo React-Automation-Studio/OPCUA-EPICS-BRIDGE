@@ -24,12 +24,38 @@ async def main():
 
     # populating our address space
     # server.nodes, contains links to very common nodes like objects and root
-    myobj = await server.nodes.objects.add_object(idx, "MyObject")
-    myvar = await myobj.add_variable(idx, "MyVariable", 6)
-    myvar2 = await myobj.add_variable(idx, "MyVariable2", 6)
+    OpcuaTests = await server.nodes.objects.add_object(idx, "OpcuaTests")
+    AiInt64_1 = await OpcuaTests.add_variable(idx, "AiInt64_1", 0,varianttype=ua.VariantType.Int64)
+    await AiInt64_1.set_writable()
+    AiInt64_2 = await OpcuaTests.add_variable(idx, "AiInt64_2", 0,varianttype=ua.VariantType.Int64)
+    await AiInt64_2.set_writable()
+    AoInt64_1 = await OpcuaTests.add_variable(idx, "AoInt64_1", 0,varianttype=ua.VariantType.Int64)
+    await AoInt64_1.set_writable()
+    AoInt64_2 = await OpcuaTests.add_variable(idx, "AoInt64_2", 0,varianttype=ua.VariantType.Int64)
+    await AoInt64_2.set_writable()
+    AiInt32 = await OpcuaTests.add_variable(idx, "AiInt32", 0,varianttype=ua.VariantType.Int32)
+    await AiInt32.set_writable()
+    AoInt32 = await OpcuaTests.add_variable(idx, "AoInt32", 0,varianttype=ua.VariantType.Int32)
+    await AoInt32.set_writable()
+    AiInt16 = await OpcuaTests.add_variable(idx, "AiInt16", 0,varianttype=ua.VariantType.Int16)
+    await AiInt16.set_writable()
+    AoInt16 = await OpcuaTests.add_variable(idx, "AoInt16", 0,varianttype=ua.VariantType.Int16)
+    await AoInt16.set_writable()
+    AiByte = await OpcuaTests.add_variable(idx, "AiByte", 0,varianttype=ua.VariantType.Byte)
+    await AiByte.set_writable()
+    AoByte = await OpcuaTests.add_variable(idx, "AoByte", 0,varianttype=ua.VariantType.Byte)
+    await AoByte.set_writable()
+    Bi = await OpcuaTests.add_variable(idx, "Bi",False, varianttype=ua.VariantType.Boolean)
+    await Bi.set_writable()
+    Bo = await OpcuaTests.add_variable(idx, "Bo", False,varianttype=ua.VariantType.Boolean)
+    await Bo.set_writable()
+    Bi2 = await OpcuaTests.add_variable(idx, "Bi2",True, varianttype=ua.VariantType.Boolean)
+    await Bi2.set_writable()
     # Set MyVariable to be writable by clients
-    await myvar.set_writable()
-    await myvar2.set_writable()
+    
+    
+    
+    
     # await server.nodes.objects.add_method(
     #     ua.NodeId("ServerMethod", idx),
     #     ua.QualifiedName("ServerMethod", idx),
@@ -41,13 +67,24 @@ async def main():
     async with server:
         while True:
             await asyncio.sleep(1)
-            val = await myvar.get_value()
-            val2 = await myvar2.get_value()
-            print("server val:",val)
-            print("server val2:",val2)
-            # _logger.info("Set value of %s to %.1f", myvar, new_val)
-            # print("Set value of %s to %.1f", myvar, new_val)
-            # await myvar.write_value(new_val)
+            val = await AiInt64_1.get_value()
+            val2 = await AiInt64_2.get_value()
+            print("server AiInt64_1:",val)
+            print("server AiInt64_2:",val2)
+            val3 = await AoInt64_1.get_value()
+            val4 = await AoInt64_2.get_value()
+            print("server AoInt64_1:",val3)
+            print("server AoInt64_2:",val4)
+            val5 = await Bi.get_value()
+            print("server Bi:",val5)
+            val5 = await Bi.write_value(not val5)
+            val6 = await Bi2.get_value()
+            print("server Bi2:",val6)
+            val7 = await Bo.get_value()
+            print("server Bo:",val7)
+            # _logger.info("Set value of %s to %.1f", AiInt64_1, new_val)
+            # print("Set value of %s to %.1f", AiInt64_1, new_val)
+            # await AiInt64_1.write_value(new_val)
 
 
 if __name__ == "__main__":
