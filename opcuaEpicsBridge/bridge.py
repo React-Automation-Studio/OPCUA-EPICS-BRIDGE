@@ -4,9 +4,9 @@ import logging
 import time
 import os
 import json
-from asyncua.sync import Client,ua
+from asyncua import Client,ua
 from softioc import softioc, builder
-import cothread
+import asyncio
 from functools import partial
 from dbtoolspy import load_template_file, load_database_file
 
@@ -54,9 +54,8 @@ class SubHandler(object):
     def setDebug(self,debug):
         self.debug=debug
         
-
-if __name__ == "__main__":
-    def on_epics_pv_update(val,opcuaClientName,epicsPvName,epicsType,opcuaType,opcuaName,opcuaClients,ZNAM=None,ONAM=None,debug=None,**kwargs):
+async def main():
+    async def on_epics_pv_update(val,opcuaClientName,epicsPvName,epicsType,opcuaType,opcuaName,opcuaClients,ZNAM=None,ONAM=None,debug=None,**kwargs):
         if debug:
             print("on_epics_pv_update val:",val)
             print("on_epics_pv_update clientName:",opcuaClientName)
@@ -64,15 +63,15 @@ if __name__ == "__main__":
             print("on_epics_pv_update epicsType:",epicsType)
             
         client=opcuaClients[opcuaClientName]["client"]
-        var=client.get_node(opcuaName)
+        var= await client.get_node(opcuaName)
         
-        currentValue=var.get_value()
+        currentValue= await var.get_value()
         
         if "BO" in epicsType:
             x=int(val)==1
             # print("val,x",val,x)
             dv = ua.DataValue(ua.Variant(int(val)==1, ua.VariantType.Boolean))
-            var.set_value(dv)
+            await var.set_value(dv)
     
                         
         else:
@@ -80,22 +79,22 @@ if __name__ == "__main__":
             if newValue!=str(currentValue):
                 if opcuaType=='Float':
                     dv = ua.DataValue(ua.Variant(float(newValue), ua.VariantType.Float))
-                    var.set_value(dv)
+                    await var.set_value(dv)
                 elif opcuaType=='Double':
                     dv = ua.DataValue(ua.Variant(float(newValue), ua.VariantType.Double))
-                    var.set_value(dv)
+                    await var.set_value(dv)
                 elif opcuaType=='Int16':
                     dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.Int16))
-                    var.set_value(dv)
+                    await var.set_value(dv)
                 elif opcuaType=='Int32':
                     dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.Int32))
-                    var.set_value(dv)
+                    await var.set_value(dv)
                 elif opcuaType=='Int64':
                     dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.Int64))
-                    var.set_value(dv)
+                    await var.set_value(dv)
                 elif opcuaType=='Byte':
                     dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.Int16))
-                    var.set_value(dv)
+                    await var.set_value(dv)
                 else:
                     print("incorrect opcua type")
                 
@@ -124,7 +123,7 @@ if __name__ == "__main__":
         opcuaClient["client"]=Client(url)
         
         # opcuaClient["client"].set_security_string("Basic256Sha256,SignAndEncrypt,../certificates/my_cert.der,../certificates/my_private_key.pem")
-        opcuaClient["client"].connect()
+        await opcuaClient["client"].connect()
         opcuaClient["handler"] = SubHandler()
         opcuaClient["handler"].setClientNameAndUrl(name,url)
         opcuaClient["handler"].setClients(clients)
@@ -132,7 +131,7 @@ if __name__ == "__main__":
         opcuaClient["handler"].setDebug(debug)
 
         
-        opcuaClient["sub"] = opcuaClient["client"].create_subscription(subscriptionRate, opcuaClient["handler"])
+        opcuaClient["sub"] = await opcuaClient["client"].create_subscription(subscriptionRate, opcuaClient["handler"])
         opcuaClient["opcuaToEpicsNames"]={}
         opcuaClient["epicsToOpcuaNames"]={}
         
@@ -189,7 +188,7 @@ if __name__ == "__main__":
                     epicsPvs[epicsPvName]["epicsType"]="BI"
                 opcuaClient["opcuaToEpicsNames"][str(opcuaName)]=str(epicsPvName)
                 opcuaClient["epicsToOpcuaNames"][str(epicsPvName)]=str(opcuaName)    
-                opcuaClient["sub"].subscribe_data_change(opcuaClient["client"].get_node(opcuaName))
+                await opcuaClient["sub"].subscribe_data_change(opcuaClient["client"].get_node(opcuaName))
         # except Exception as e:
         #     print("e1",e)
     except Exception as e:
@@ -208,6 +207,8 @@ if __name__ == "__main__":
 
     softioc.dbgrep("*")
     print("\n")
+    while True:
+        await asyncio.sleep(1)
     # try:
         
     #     while True:
@@ -219,3 +220,6 @@ if __name__ == "__main__":
     #     for clientName in clients:
     #         client=clients[clientName]["client"]
     #         client.disconnect()
+if __name__ == "__main__":
+    # logging.basicConfig(level=logging.INFO)
+    asyncio.run(main())
