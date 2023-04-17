@@ -12,7 +12,7 @@ services:
     environment:
       - name=OpcuaTest1
       - url=opc.tcp://0.0.0.0:4840
-      - subscriptionRate=1000
+      - subscriptionRate=100
       # - debug=True
     volumes:
       - ./certificates:/certificates/

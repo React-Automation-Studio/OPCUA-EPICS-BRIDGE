@@ -5,10 +5,17 @@ import time
 import os
 import json
 from asyncua import Client,ua
-from softioc import softioc, builder
+from softioc import softioc, builder, asyncio_dispatcher
 import asyncio
 from functools import partial
 from dbtoolspy import load_template_file, load_database_file
+
+
+
+
+
+dispatcher = asyncio_dispatcher.AsyncioDispatcher()
+
 
 class SubHandler(object):
 
@@ -56,6 +63,8 @@ class SubHandler(object):
         
 async def main():
     async def on_epics_pv_update(val,opcuaClientName,epicsPvName,epicsType,opcuaType,opcuaName,opcuaClients,ZNAM=None,ONAM=None,debug=None,**kwargs):
+
+       
         if debug:
             print("on_epics_pv_update val:",val)
             print("on_epics_pv_update clientName:",opcuaClientName)
@@ -63,16 +72,15 @@ async def main():
             print("on_epics_pv_update epicsType:",epicsType)
             
         client=opcuaClients[opcuaClientName]["client"]
-        var= await client.get_node(opcuaName)
+        var= client.get_node(opcuaName)
         
-        currentValue= await var.get_value()
-        
+        currentValue= await var.read_value()
         if "BO" in epicsType:
             x=int(val)==1
             # print("val,x",val,x)
             dv = ua.DataValue(ua.Variant(int(val)==1, ua.VariantType.Boolean))
-            await var.set_value(dv)
-    
+            await var.write_value(dv)
+           
                         
         else:
             newValue=str(val)  
@@ -193,13 +201,13 @@ async def main():
         #     print("e1",e)
     except Exception as e:
         print("exception",e)
-        
+        exit(1)
     
     print(str(opcuaClient["opcuaToEpicsNames"]))
     print(str(opcuaClient["epicsToOpcuaNames"]))
     # softioc.dbLoadDatabase("test.db")
     builder.LoadDatabase()
-    softioc.iocInit()
+    softioc.iocInit(dispatcher)
     print("EPICS OPCUA bridge loaded")
     print(F"OPCUA HOST URL: {url}")
     print(F"OPCUA Subscription Rate: {subscriptionRate} ms")
@@ -208,7 +216,15 @@ async def main():
     softioc.dbgrep("*")
     print("\n")
     while True:
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.1)
+    #     for clientName in clients:
+    #         client=clients[clientName]["client"]
+    # #         #     client.check_connection()
+    #         try:
+    #             await client.check_connection()
+    #         except Exception as e:
+    #             print("exception",e)
+    #             exit(1)
     # try:
         
     #     while True:
