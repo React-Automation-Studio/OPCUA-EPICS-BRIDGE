@@ -18,7 +18,8 @@ class SubHandler(object):
     Do not do expensive, slow or network operation there. Create another 
     thread if you need to do such a thing
     """
-
+    def status_change_notification(self, status):
+        print("status_change_notification")
     def datachange_notification(self, node, val, data):
         epicsName=self.clients[self.clientName]["opcuaToEpicsNames"][str(node)]
         if self.debug:
@@ -72,7 +73,7 @@ if __name__ == "__main__":
             # print("val,x",val,x)
             dv = ua.DataValue(ua.Variant(int(val)==1, ua.VariantType.Boolean))
             var.set_value(dv)
-       
+    
                         
         else:
             newValue=str(val)  
@@ -105,7 +106,7 @@ if __name__ == "__main__":
     clients={}
     epicsPvs={}
     logging.basicConfig(level=logging.WARNING)
-   
+
     
 
     try:
@@ -193,7 +194,7 @@ if __name__ == "__main__":
         #     print("e1",e)
     except Exception as e:
         print("exception",e)
-        exit(1)
+        
     
     print(str(opcuaClient["opcuaToEpicsNames"]))
     print(str(opcuaClient["epicsToOpcuaNames"]))
@@ -202,16 +203,19 @@ if __name__ == "__main__":
     softioc.iocInit()
     print("EPICS OPCUA bridge loaded")
     print(F"OPCUA HOST URL: {url}")
-    
+    print(F"OPCUA Subscription Rate: {subscriptionRate} ms")
     print("\nThe following bridge PVs are loaded:\n")
 
     softioc.dbgrep("*")
     print("\n")
-    try:
+    # try:
         
-        while True:
-            cothread.Sleep(0.1)
-    finally:
-        for clientName in clients:
-            client=clients[clientName]["client"]
-            client.disconnect()
+    #     while True:
+    #         cothread.Sleep(0.1)
+    #         # for clientName in clients:
+    #         #     client=clients[clientName]["client"]
+    #         #     client.check_connection()
+    # finally:
+    #     for clientName in clients:
+    #         client=clients[clientName]["client"]
+    #         client.disconnect()
