@@ -137,20 +137,20 @@ if __name__ == "__main__":
         
         for record in db.values():
             epicsType=record.fields["DTYP"]
-            opcuaName=str(record.fields["OPCUA_NAME"])
+           
             epicsPvName=str(record.name)
-            opcuaClient["opcuaToEpicsNames"][str(opcuaName)]=str(epicsPvName)
-            opcuaClient["epicsToOpcuaNames"][str(epicsPvName)]=str(opcuaName)
+           
             epicsType=str(record.rtyp).upper()
             opcuaType=str(record.fields["OPCUA_TYPE"])
             epicsPvs[epicsPvName]={}
             epicsPvs[epicsPvName]["initialized"]=False
                 
             if "AI" in epicsType:
+                opcuaName=str(record.fields["INP"])
                 fields={}
                 for field in record.fields:
                     upper=str(field).upper()
-                    if upper in ["ZNAM","ONAM","DESC","EGU","HOPR","LOPR","PREC"]:
+                    if upper in ["DESC","EGU","HOPR","LOPR","PREC"]:
                         fields[upper]=record.fields[field]
                 
                 epicsPvs[epicsPvName]["pv"]=builder.aIn(epicsPvName,**fields)
@@ -158,15 +158,17 @@ if __name__ == "__main__":
                 
 
             if "AO" in epicsType:
+                opcuaName=str(record.fields["OUT"])
                 fields={}
                 for field in record.fields:
                     upper=str(field).upper()
-                    if upper in ["ZNAM","ONAM","DESC","EGU","HOPR","LOPR","PREC"]:
+                    if upper in ["DESC","EGU","HOPR","LOPR","PREC"]:
                         fields[upper]=record.fields[field]
                 epicsPvs[epicsPvName]["pv"]=builder.aOut(epicsPvName,on_update=partial(on_epics_pv_update,opcuaClientName=name,epicsPvName=epicsPvName,epicsType=epicsType,opcuaName=opcuaName,opcuaType=opcuaType,opcuaClients=clients,debug=debug,**fields),**fields)
                 epicsPvs[epicsPvName]["epicsType"]="AO"
 
             elif "BO" in epicsType:
+                opcuaName=str(record.fields["OUT"])
                 fields={}
                 for field in record.fields:
                     upper=str(field).upper()
@@ -175,14 +177,16 @@ if __name__ == "__main__":
                 epicsPvs[epicsPvName]["pv"]=builder.boolOut(epicsPvName,on_update=partial(on_epics_pv_update,opcuaClientName=name,epicsPvName=epicsPvName,epicsType=epicsType,opcuaName=opcuaName,opcuaType=opcuaType,opcuaClients=clients,**fields),**fields)
                 epicsPvs[epicsPvName]["epicsType"]="BO"
             elif "BI" in epicsType:
-                
+                opcuaName=str(record.fields["INP"])
                 fields={}
                 for field in record.fields:
                     upper=str(field).upper()
                     if upper in ["ZNAM","ONAM","DESC","EGU","HOPR","LOPR","PREC"]:
                         fields[upper]=record.fields[field]
                 epicsPvs[epicsPvName]["pv"]=builder.boolIn(epicsPvName,**fields)
-                epicsPvs[epicsPvName]["epicsType"]="BI"    
+                epicsPvs[epicsPvName]["epicsType"]="BI"
+            opcuaClient["opcuaToEpicsNames"][str(opcuaName)]=str(epicsPvName)
+            opcuaClient["epicsToOpcuaNames"][str(epicsPvName)]=str(opcuaName)    
             opcuaClient["sub"].subscribe_data_change(opcuaClient["client"].get_node(opcuaName))
         # except Exception as e:
         #     print("e1",e)
