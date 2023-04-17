@@ -8,7 +8,7 @@ services:
     network_mode: host
     tty: true
     stdin_open: true
-    command: "/bin/sh -c 'python client-minimal.py;'"
+    command: "/bin/sh -c 'sleep 2 ; python client-minimal.py;'"
     env_file: .env
     # environment:
     volumes:
