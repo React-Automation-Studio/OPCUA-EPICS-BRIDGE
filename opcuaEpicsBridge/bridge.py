@@ -10,6 +10,8 @@ import cothread
 from functools import partial
 from dbtoolspy import load_template_file, load_database_file
 
+forceExit =False
+
 class SubHandler(object):
 
     """
@@ -18,7 +20,11 @@ class SubHandler(object):
     Do not do expensive, slow or network operation there. Create another 
     thread if you need to do such a thing
     """
-
+    def status_change_notification(self, status):
+        global forceExit
+        print("status_change_notification")
+        print("status: ",hex(status.Status))
+        forceExit=True
     def datachange_notification(self, node, val, data):
         epicsName=self.clients[self.clientName]["opcuaToEpicsNames"][str(node)]
         if self.debug:
@@ -43,6 +49,7 @@ class SubHandler(object):
     def event_notification(self, event):
         if self.debug:
             print("Python: New event", event)
+        print("Python: New event", event)
     def setClientNameAndUrl(self,name,url):
         self.clientName=name
         self.clientUrl=url
@@ -55,6 +62,7 @@ class SubHandler(object):
         
 
 if __name__ == "__main__":
+    
     def on_epics_pv_update(val,opcuaClientName,epicsPvName,epicsType,opcuaType,opcuaName,opcuaClients,ZNAM=None,ONAM=None,debug=None,**kwargs):
         if debug:
             print("on_epics_pv_update val:",val)
@@ -69,7 +77,6 @@ if __name__ == "__main__":
         
         if "BO" in epicsType:
             x=int(val)==1
-            # print("val,x",val,x)
             dv = ua.DataValue(ua.Variant(int(val)==1, ua.VariantType.Boolean))
             var.set_value(dv)
        
@@ -98,7 +105,6 @@ if __name__ == "__main__":
                 else:
                     print("incorrect opcua type")
                 
-        # cothread.Sleep(1)   
         if debug:
             print(f"on_epics_pv_update pv: {epicsPvName} opcua currentValue: {currentValue}")
         
@@ -189,28 +195,28 @@ if __name__ == "__main__":
                 opcuaClient["opcuaToEpicsNames"][str(opcuaName)]=str(epicsPvName)
                 opcuaClient["epicsToOpcuaNames"][str(epicsPvName)]=str(opcuaName)    
                 opcuaClient["sub"].subscribe_data_change(opcuaClient["client"].get_node(opcuaName))
-        # except Exception as e:
-        #     print("e1",e)
     except Exception as e:
         print("exception",e)
-        exit(1)
-    
-    print(str(opcuaClient["opcuaToEpicsNames"]))
-    print(str(opcuaClient["epicsToOpcuaNames"]))
-    # softioc.dbLoadDatabase("test.db")
-    builder.LoadDatabase()
-    softioc.iocInit()
-    print("EPICS OPCUA bridge loaded")
-    print(F"OPCUA HOST URL: {url}")
-    
-    print("\nThe following bridge PVs are loaded:\n")
+        forceExit=True
+        
+    if not forceExit:    
+        builder.LoadDatabase()
+        softioc.iocInit()
+        print("EPICS OPCUA bridge loaded")
+        print(F"OPCUA HOST URL: {url}")
+        
+        print("\nThe following bridge PVs are loaded:\n")
 
-    softioc.dbgrep("*")
-    print("\n")
+        softioc.dbgrep("*")
+        print("\n")
     try:
         
         while True:
             cothread.Sleep(0.1)
+            if forceExit:
+                exit(1)
+
+
     finally:
         for clientName in clients:
             client=clients[clientName]["client"]
