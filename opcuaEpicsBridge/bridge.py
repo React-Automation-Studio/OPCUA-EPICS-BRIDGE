@@ -116,6 +116,7 @@ if __name__ == "__main__":
 
     try:
         debug = os.getenv("debug", False)=="True"
+        secure = os.getenv("secure", False)=="True"
         name = os.getenv("name", None)
         url = os.getenv("url", None)
         try:
@@ -127,8 +128,9 @@ if __name__ == "__main__":
         clients[name]={}
         opcuaClient=clients[name]
         opcuaClient["client"]=Client(url)
-        
-        # opcuaClient["client"].set_security_string("Basic256Sha256,SignAndEncrypt,../certificates/my_cert.der,../certificates/my_private_key.pem")
+        if secure :
+            print("is secure")
+            opcuaClient["client"].set_security_string("Basic256Sha256,SignAndEncrypt,../certificates/my_cert.der,../certificates/my_private_key.pem")
         opcuaClient["client"].connect()
         opcuaClient["handler"] = SubHandler()
         opcuaClient["handler"].setClientNameAndUrl(name,url)

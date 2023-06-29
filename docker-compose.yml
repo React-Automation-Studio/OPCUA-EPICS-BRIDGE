@@ -11,11 +11,12 @@ services:
     env_file: .env
     environment:
       - name=OpcuaTest1
-      - url=opc.tcp://0.0.0.0:4840
+      - url=opc.tcp://192.168.56.104:4840
       - subscriptionRate=1000
+      - secure=True
       # - debug=True
     volumes:
       - ./certificates:/certificates/
-      - ./db/test.db:/bridge/bridge.db
+      - ./db/testBeckhoff.db:/bridge/bridge.db
       
   
