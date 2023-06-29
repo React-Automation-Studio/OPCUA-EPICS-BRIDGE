@@ -3,7 +3,8 @@ import logging
 
 from asyncua import Server, ua
 from asyncua.common.methods import uamethod
-
+from asyncua.crypto.permission_rules import SimpleRoleRuleset
+from asyncua.server.user_managers import CertificateUserManager
 
 @uamethod
 def func(parent, value):
@@ -14,10 +15,19 @@ def func(parent, value):
 async def main():
     _logger = logging.getLogger(__name__)
     # setup our server
-    server = Server()
+    cert_user_manager = CertificateUserManager()
+    await cert_user_manager.add_user("../certificates/my_cert.der", name='test_user')
+
+    server = Server(user_manager=cert_user_manager)
     await server.init()
     server.set_endpoint("opc.tcp://0.0.0.0:4840/freeopcua/server/")
+    server.set_security_policy([ua.SecurityPolicyType.Basic256Sha256_SignAndEncrypt],
+                               permission_ruleset=SimpleRoleRuleset())
+    # load server certificate and private key. This enables endpoints
+    # with signing and encryption.
 
+    await server.load_certificate("../certificates/my_cert.der")
+    await server.load_private_key("../certificates/my_private_key.pem")
     # set up our own namespace, not really necessary but should as spec
     uri = "http://examples.freeopcua.github.io"
     idx = await server.register_namespace(uri)

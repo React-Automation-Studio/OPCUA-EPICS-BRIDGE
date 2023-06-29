@@ -118,6 +118,7 @@ if __name__ == "__main__":
         debug = os.getenv("debug", False)=="True"
         name = os.getenv("name", None)
         url = os.getenv("url", None)
+        secure = os.getenv("secure", False)=="True"
         try:
             subscriptionRate = int(os.environ["subscriptionRate"])
         except:
@@ -127,8 +128,8 @@ if __name__ == "__main__":
         clients[name]={}
         opcuaClient=clients[name]
         opcuaClient["client"]=Client(url)
-        
-        # opcuaClient["client"].set_security_string("Basic256Sha256,SignAndEncrypt,../certificates/my_cert.der,../certificates/my_private_key.pem")
+        if secure :
+            opcuaClient["client"].set_security_string("Basic256Sha256,SignAndEncrypt,../certificates/my_cert.der,../certificates/my_private_key.pem")
         opcuaClient["client"].connect()
         opcuaClient["handler"] = SubHandler()
         opcuaClient["handler"].setClientNameAndUrl(name,url)

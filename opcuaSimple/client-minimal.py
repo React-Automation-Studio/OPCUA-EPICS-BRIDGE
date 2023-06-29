@@ -2,6 +2,7 @@ import asyncio
 
 from asyncua import Client
 from time import sleep
+
 url = "opc.tcp://0.0.0.0:4840/freeopcua/server/"
 namespace = "http://examples.freeopcua.github.io"
 
@@ -10,6 +11,7 @@ async def main():
     
     print(f"Connecting to {url} ...")
     async with Client(url=url) as client:
+        await client.set_security_string("Basic256Sha256,SignAndEncrypt,../certificates/my_cert.der,../certificates/my_private_key.pem")
         # Find the namespace index
         nsidx = await client.get_namespace_index(namespace)
         print(f"Namespace Index for '{namespace}': {nsidx}")
