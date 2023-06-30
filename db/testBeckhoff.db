@@ -1,0 +1,129 @@
+record(ai, "Beckoff:tick")
+{       
+        field(DTYP,"OPCUA_Int64")
+        field(INP, "ns=4;s=GVL.tick")
+        field(DESC, "tick")
+        # field(EGU, "Seconds")
+        # field(HOPR, "10000")
+        # field(LOPR, "0")
+	# field(PREC, "0")
+}
+
+# record(ai, "OpcuaTests:AiInt64_2")
+# {       
+#         field(DTYP,"OPCUA_Int64")
+#         field(INP, "ns=2;i=3")
+#         field(DESC, "AiInt64 2")
+#         field(EGU, "Seconds")
+#         field(HOPR, "10000")
+#         field(LOPR, "0")
+#         field(PREC, "0")
+# }
+
+# record(ao, "OpcuaTests:AoInt64_1")
+# {       
+#         field(DTYP,"OPCUA_Int64")
+#         field(OUT, "ns=2;i=4")
+#         field(DESC, "Ao int64 1")
+#         field(EGU, "Hz")
+#         field(HOPR, "10000")
+#         field(LOPR, "0")
+#         field(PREC, "0")
+# }
+# record(ao, "OpcuaTests:AoInt64_2")
+# {       
+#         field(DTYP,"OPCUA_Int64")
+#         field(OUT, "ns=2;i=5")
+#         field(DESC, "Ao int64 2")
+#         field(EGU, "Hz")
+#         field(HOPR, "10000")
+#         field(LOPR, "0")
+#         field(PREC, "0")
+# }
+# record(ai, "OpcuaTests:AiInt32")
+# {       
+#         field(DTYP,"OPCUA_Int32")
+#         field(INP, "ns=2;i=6")
+#         field(DESC, "Ai int32 ")
+#         field(EGU, "xyz")
+#         field(HOPR, "1000")
+#         field(LOPR, "0")
+#         field(PREC, "0")
+# }
+# record(ao, "OpcuaTests:AoInt32")
+# {       
+#         field(DTYP,"OPCUA_Int32")
+#         field(OUT, "ns=2;i=7")
+#         field(DESC, "Ao int32 ")
+#         field(EGU, "xyz")
+#         field(HOPR, "1000")
+#         field(LOPR, "0")
+#         field(PREC, "0")
+# }
+# record(ai, "OpcuaTests:AiInt16")
+# {       
+#         field(DTYP,"OPCUA_Int16")
+#         field(INP, "ns=2;i=8")
+#         field(DESC, "Ai int16 ")
+#         field(EGU, "xyz")
+#         field(HOPR, "1000")
+#         field(LOPR, "0")
+#         field(PREC, "0")
+# }
+# record(ao, "OpcuaTests:AoInt16")
+# {       
+#         field(DTYP,"OPCUA_Int16")
+#         field(OUT, "ns=2;i=9")
+#         field(DESC, "Ao int16 ")
+#         field(EGU, "xyz")
+#         field(HOPR, "1000")
+#         field(LOPR, "0")
+#         field(PREC, "0")
+# }
+# record(ai, "OpcuaTests:AiByte")
+# {       
+#         field(DTYP,"OPCUA_Byte")
+#         field(INP, "ns=2;i=10")
+#         field(DESC, "Ai byte ")
+#         field(EGU, "yy")
+#         field(HOPR, "255")
+#         field(LOPR, "0")
+#         field(PREC, "0")
+# }
+# record(ao, "OpcuaTests:AoByte")
+# {       
+#         field(DTYP,"OPCUA_Byte")
+#         field(OUT, "ns=2;i=11")
+#         field(DESC, "Ao byte ")
+#         field(EGU, "yy")
+#         field(HOPR, "255")
+#         field(LOPR, "0")
+#         field(PREC, "0")
+# }
+
+# record(bi, "OpcuaTests:Bi")
+# {       
+#         field(DTYP,"OPCUA_Boolean")
+#         field(INP, "ns=2;i=12")
+#         field(DESC, "BI")
+#         field(ZNAM, "Off")
+#         field(ONAM, "On")
+# }
+# record(bo, "OpcuaTests:Bo")
+# {       
+#         field(DTYP,"OPCUA_Boolean")
+#         field(OUT, "ns=2;i=13")
+#         field(DESC, "BO")
+#         field(ZNAM, "Off")
+#         field(ONAM, "On")
+# }
+
+# record(bi, "OpcuaTests:Bi2")
+# {       
+#         field(DTYP,"OPCUA_Boolean")
+#         field(INP, "ns=2;i=14")
+#         field(DESC, "BI2")
+#         field(ZNAM, "Off")
+#         field(ONAM, "On")
+       
+# }
