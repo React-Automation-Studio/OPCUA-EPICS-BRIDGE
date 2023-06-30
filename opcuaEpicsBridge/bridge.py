@@ -129,7 +129,7 @@ if __name__ == "__main__":
         opcuaClient=clients[name]
         opcuaClient["client"]=Client(url)
         if secure :
-            opcuaClient["client"].set_security_string("Basic256Sha256,SignAndEncrypt,../certificates/my_cert.der,../certificates/my_private_key.pem")
+            opcuaClient["client"].set_security_string("Basic256Sha256,SignAndEncrypt,../certificates/client.der,../certificates/client_private_key.pem")
         opcuaClient["client"].connect()
         opcuaClient["handler"] = SubHandler()
         opcuaClient["handler"].setClientNameAndUrl(name,url)

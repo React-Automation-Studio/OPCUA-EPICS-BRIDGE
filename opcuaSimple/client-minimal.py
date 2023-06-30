@@ -1,17 +1,25 @@
 import asyncio
-
+import os
 from asyncua import Client
 from time import sleep
-
+from asyncua.crypto.security_policies import SecurityPolicyBasic256Sha256
 url = "opc.tcp://0.0.0.0:4840/freeopcua/server/"
 namespace = "http://examples.freeopcua.github.io"
 
 print("client here")
 async def main():
-    
+    secure = os.getenv("secure", False)=="True"
     print(f"Connecting to {url} ...")
-    async with Client(url=url) as client:
-        await client.set_security_string("Basic256Sha256,SignAndEncrypt,../certificates/my_cert.der,../certificates/my_private_key.pem")
+    client = Client(url=url)
+    if secure:
+        await client.set_security(
+            SecurityPolicyBasic256Sha256,
+            certificate="../certificates/client.der",
+            private_key="../certificates/client_private_key.pem",
+            server_certificate="../certificates/server.der"
+        )
+    async with client:
+        # await client.set_security_string("Basic256Sha256,SignAndEncrypt,../certificates/my_cert.der,../certificates/my_private_key.pem")
         # Find the namespace index
         nsidx = await client.get_namespace_index(namespace)
         print(f"Namespace Index for '{namespace}': {nsidx}")
