@@ -1,5 +1,23 @@
 version: '3.2'
 services:
+  opcuapepicsbridge:
+    build:
+      context: ./
+      dockerfile: docker/opcuaEpicsBridge/Dockerfile
+    restart: always
+    network_mode: host
+    tty: true
+    stdin_open: true
+    env_file: .env
+    environment:
+      - name=OpcuaTest1
+      - url=opc.tcp://test_user@0.0.0.0:4840
+      - subscriptionRate=1000
+      # - debug=True
+      - secure=False
+    volumes:
+      - ./certificates:/certificates/
+      - ./db/test.db:/bridge/bridge.db
   opcuasimpleclient:
     build:
       context: ./
@@ -11,7 +29,7 @@ services:
     command: "/bin/sh -c 'sleep 2 ; python client-minimal.py;'"
     env_file: .env
     environment:
-      - secure=True
+      - secure=False
     volumes:
       - ./certificates:/certificates/
   opcuasimpleserver:
@@ -25,9 +43,8 @@ services:
     command: "/bin/sh -c 'python server-minimal.py;'"
     env_file: .env
     environment:
-      - secure=True
+      - secure=False
     volumes:
       - ./certificates:/certificates/
-    
       
   
