@@ -1,129 +1,229 @@
-record(ai, "OpcuaTests:AiInt64_1")
+# test records for all opcua datatypes serverd from a OPCUA-Python plc using OPCUA
+
+record(ai, "OPCUA-Python:tick")
 {       
         field(DTYP,"OPCUA_Int64")
-        field(INP, "ns=2;i=2")
-        field(DESC, "AiInt64 1")
-        field(EGU, "Seconds")
-        field(HOPR, "10000")
-        field(LOPR, "0")
-	field(PREC, "0")
+        field(INP, "ns=4;s=GVL.tick")
+        field(DESC, "tick")
 }
 
-record(ai, "OpcuaTests:AiInt64_2")
+record(ao, "OPCUA-Python:AoInt64")
 {       
         field(DTYP,"OPCUA_Int64")
-        field(INP, "ns=2;i=3")
-        field(DESC, "AiInt64 2")
-        field(EGU, "Seconds")
+        field(OUT, "ns=4;s=GVL.AoInt64")
+        field(DESC, "AoInt64")
+        field(DESC, "AoInt64")
         field(HOPR, "10000")
         field(LOPR, "0")
         field(PREC, "0")
 }
 
-record(ao, "OpcuaTests:AoInt64_1")
+record(ai, "OPCUA-Python:AiInt64")
 {       
         field(DTYP,"OPCUA_Int64")
-        field(OUT, "ns=2;i=4")
-        field(DESC, "Ao int64 1")
-        field(EGU, "Hz")
-        field(HOPR, "10000")
+        field(INP, "ns=4;s=GVL.AiInt64")
+        field(DESC, "AiInt64")
+}
+
+
+
+record(ao, "OPCUA-Python:AoUInt64")
+{       
+        field(DTYP,"OPCUA_UInt64")
+        field(OUT, "ns=4;s=GVL.AoUInt64")
+        field(DESC, "AoUInt64")
+        field(DESC, "AoUInt64")
+        field(HOPR, "100000000")
         field(LOPR, "0")
         field(PREC, "0")
 }
-record(ao, "OpcuaTests:AoInt64_2")
+
+record(ai, "OPCUA-Python:AiUInt64")
 {       
-        field(DTYP,"OPCUA_Int64")
-        field(OUT, "ns=2;i=5")
-        field(DESC, "Ao int64 2")
-        field(EGU, "Hz")
-        field(HOPR, "10000")
-        field(LOPR, "0")
-        field(PREC, "0")
+        field(DTYP,"OPCUA_UInt64")
+        field(INP, "ns=4;s=GVL.AiUInt64")
+        field(DESC, "AiUInt64")
 }
-record(ai, "OpcuaTests:AiInt32")
+
+
+
+record(ai, "OPCUA-Python:AiInt32")
 {       
         field(DTYP,"OPCUA_Int32")
-        field(INP, "ns=2;i=6")
+        field(INP, "ns=4;s=GVL.AiInt32")
         field(DESC, "Ai int32 ")
-        field(EGU, "xyz")
-        field(HOPR, "1000")
-        field(LOPR, "0")
         field(PREC, "0")
 }
-record(ao, "OpcuaTests:AoInt32")
+record(ao, "OPCUA-Python:AoInt32")
 {       
         field(DTYP,"OPCUA_Int32")
-        field(OUT, "ns=2;i=7")
+        field(OUT, "ns=4;s=GVL.AoInt32")
         field(DESC, "Ao int32 ")
-        field(EGU, "xyz")
-        field(HOPR, "1000")
+        field(HOPR, "2147483647")
+        field(LOPR, "-2147483648")
+        field(PREC, "0")
+}
+
+record(ai, "OPCUA-Python:AiUInt32")
+{       
+        field(DTYP,"OPCUA_UInt32")
+        field(INP, "ns=4;s=GVL.AiUInt32")
+        field(DESC, "Ai UInt32 ")
+        field(PREC, "0")
+}
+record(ao, "OPCUA-Python:AoUInt32")
+{       
+        field(DTYP,"OPCUA_UInt32")
+        field(OUT, "ns=4;s=GVL.AoUInt32")
+        field(DESC, "Ao UInt32 ")
+        field(HOPR, "4294967295")
         field(LOPR, "0")
         field(PREC, "0")
 }
-record(ai, "OpcuaTests:AiInt16")
+
+record(ai, "OPCUA-Python:AiInt16")
 {       
         field(DTYP,"OPCUA_Int16")
-        field(INP, "ns=2;i=8")
-        field(DESC, "Ai int16 ")
-        field(EGU, "xyz")
-        field(HOPR, "1000")
-        field(LOPR, "0")
+        field(INP, "ns=4;s=GVL.AiInt16")
+        field(DESC, "Ai Int16 ")
         field(PREC, "0")
 }
-record(ao, "OpcuaTests:AoInt16")
+record(ao, "OPCUA-Python:AoInt16")
 {       
         field(DTYP,"OPCUA_Int16")
-        field(OUT, "ns=2;i=9")
-        field(DESC, "Ao int16 ")
-        field(EGU, "xyz")
-        field(HOPR, "1000")
+        field(OUT, "ns=4;s=GVL.AoInt16")
+        field(DESC, "Ao Int16 ")
+        field(HOPR, "32767")
+        field(LOPR, "-32768")
+        field(PREC, "0")
+}
+
+record(ai, "OPCUA-Python:AiUInt16")
+{       
+        field(DTYP,"OPCUA_UInt16")
+        field(INP, "ns=4;s=GVL.AiUInt16")
+        field(DESC, "Ai UInt16 ")
+        field(PREC, "0")
+}
+record(ao, "OPCUA-Python:AoUInt16")
+{       
+        field(DTYP,"OPCUA_UInt16")
+        field(OUT, "ns=4;s=GVL.AoUInt16")
+        field(DESC, "Ao UInt16 ")
+        field(HOPR, "65535")
         field(LOPR, "0")
         field(PREC, "0")
 }
-record(ai, "OpcuaTests:AiByte")
+
+
+record(ai, "OPCUA-Python:AiFloat")
+{       
+        field(DTYP,"OPCUA_Float")
+        field(INP, "ns=4;s=GVL.AiFloat")
+        field(DESC, "Ai Float ")
+        
+        field(PREC, "3")
+}
+record(ao, "OPCUA-Python:AoFloat")
+{       
+        field(DTYP,"OPCUA_Float")
+        field(OUT, "ns=4;s=GVL.AoFloat")
+        field(DESC, "Ao Float ")
+        field(HOPR, "1e6")
+        field(LOPR, "-1e6")
+        field(PREC, "3")
+}
+
+record(ai, "OPCUA-Python:AiDouble")
+{       
+        field(DTYP,"OPCUA_Double")
+        field(INP, "ns=4;s=GVL.AiDouble")
+        field(DESC, "Ai Double ")
+        field(PREC, "6")
+}
+record(ao, "OPCUA-Python:AoDouble")
+{       
+        field(DTYP,"OPCUA_Double")
+        field(OUT, "ns=4;s=GVL.AoDouble")
+        field(DESC, "Ao Double ")
+        field(HOPR, "1e12")
+        field(LOPR, "-1e12")
+        field(PREC, "6")
+}
+
+record(ai, "OPCUA-Python:AiByte")
 {       
         field(DTYP,"OPCUA_Byte")
-        field(INP, "ns=2;i=10")
-        field(DESC, "Ai byte ")
-        field(EGU, "yy")
+        field(INP, "ns=4;s=GVL.AiByte")
+        field(DESC, "Ai Byte ")
         field(HOPR, "255")
         field(LOPR, "0")
         field(PREC, "0")
 }
-record(ao, "OpcuaTests:AoByte")
+record(ao, "OPCUA-Python:AoByte")
 {       
         field(DTYP,"OPCUA_Byte")
-        field(OUT, "ns=2;i=11")
-        field(DESC, "Ao byte ")
-        field(EGU, "yy")
+        field(OUT, "ns=4;s=GVL.AoByte")
+        field(DESC, "Ao Byte ")
         field(HOPR, "255")
         field(LOPR, "0")
         field(PREC, "0")
 }
 
-record(bi, "OpcuaTests:Bi")
+record(ai, "OPCUA-Python:AiSByte")
+{       
+        field(DTYP,"OPCUA_SByte")
+        field(INP, "ns=4;s=GVL.AiSByte")
+        field(DESC, "Ai SByte ")
+        field(HOPR, "127")
+        field(LOPR, "0")
+        field(PREC, "0")
+}
+record(ao, "OPCUA-Python:AoSByte")
+{       
+        field(DTYP,"OPCUA_SByte")
+        field(OUT, "ns=4;s=GVL.AoSByte")
+        field(DESC, "Ao SByte ")
+        field(HOPR, "127")
+        field(LOPR, "-127")
+        field(PREC, "0")
+}
+
+
+record(bi, "OPCUA-Python:Bi")
 {       
         field(DTYP,"OPCUA_Boolean")
-        field(INP, "ns=2;i=12")
+        field(INP, "ns=4;s=GVL.BiBool")
         field(DESC, "BI")
         field(ZNAM, "Off")
         field(ONAM, "On")
 }
-record(bo, "OpcuaTests:Bo")
+record(bo, "OPCUA-Python:Bo")
 {       
         field(DTYP,"OPCUA_Boolean")
-        field(OUT, "ns=2;i=13")
+        field(OUT, "ns=4;s=GVL.BoBool")
         field(DESC, "BO")
         field(ZNAM, "Off")
         field(ONAM, "On")
 }
 
-record(bi, "OpcuaTests:Bi2")
+record(stringin, "OPCUA-Python:test_date")
 {       
-        field(DTYP,"OPCUA_Boolean")
-        field(INP, "ns=2;i=14")
-        field(DESC, "BI2")
-        field(ZNAM, "Off")
-        field(ONAM, "On")
-       
+        field(DTYP,"OPCUA_DateTime")
+        field(INP, "ns=4;s=GVL.test_date")
+        field(DESC, "DateTime")
+}
+
+record(stringin, "OPCUA-Python:StringIn")
+{       
+        field(DTYP,"OPCUA_String")
+        field(INP, "ns=4;s=GVL.StringIn")
+        field(DESC, "StringIn")
+}
+
+record(stringout, "OPCUA-Python:StringOut")
+{       
+        field(DTYP,"OPCUA_String")
+        field(INP, "ns=4;s=GVL.StringOut")
+        field(DESC, "StringOut")
 }
