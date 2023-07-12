@@ -9,7 +9,7 @@ from softioc import softioc, builder
 import cothread
 from functools import partial
 from dbtoolspy import load_template_file, load_database_file
-
+import datetime
 forceExit =False
 
 class SubHandler(object):
@@ -41,10 +41,25 @@ class SubHandler(object):
                     print("val:", val)
                     print("val type:", type(val))
                     print("val name:", epicsName)
-                self.epicsPvs[epicsName]["pv"].set(val)
+                if isinstance(val,datetime.datetime):
+                    self.epicsPvs[epicsName]["pv"].set(datetime.datetime.timestamp(val))
+                else:
+                    self.epicsPvs[epicsName]["pv"].set(val)
+            else:
+                if self.epicsPvs[epicsName]["epicsType"] in ["STRINGIN"]:
+                    self.epicsPvs[epicsName]["pv"].set(str(val))
+
+          
         else:
-            self.epicsPvs[epicsName]["pv"].set(val)
-            self.epicsPvs[epicsName]["initialized"]=True
+            if isinstance(val,datetime.datetime):
+                if self.epicsPvs[epicsName]["epicsType"] in ["AI"]:
+                    self.epicsPvs[epicsName]["pv"].set(datetime.datetime.timestamp(val))
+                else:
+                    self.epicsPvs[epicsName]["pv"].set(str(val))
+                self.epicsPvs[epicsName]["initialized"]=True
+            else:
+                self.epicsPvs[epicsName]["pv"].set(val)
+                self.epicsPvs[epicsName]["initialized"]=True
 
     def event_notification(self, event):
         if self.debug:
@@ -90,20 +105,35 @@ if __name__ == "__main__":
                 elif opcuaType=='Double':
                     dv = ua.DataValue(ua.Variant(float(newValue), ua.VariantType.Double))
                     var.set_value(dv)
+                elif opcuaType=='Uint16':
+                    dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.UInt16))
+                    var.set_value(dv)
                 elif opcuaType=='Int16':
                     dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.Int16))
                     var.set_value(dv)
                 elif opcuaType=='Int32':
                     dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.Int32))
                     var.set_value(dv)
+                elif opcuaType=='Uint32':
+                    dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.UInt32))
+                    var.set_value(dv)
                 elif opcuaType=='Int64':
                     dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.Int64))
                     var.set_value(dv)
+                elif opcuaType=='Uint64':
+                    dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.UInt64))
+                    var.set_value(dv)
                 elif opcuaType=='Byte':
-                    dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.Int16))
+                    dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.Byte))
+                    var.set_value(dv)
+                elif opcuaType=='Sbyte':
+                    dv = ua.DataValue(ua.Variant(int(float(newValue)), ua.VariantType.SByte))
+                    var.set_value(dv)
+                elif opcuaType=='String':
+                    dv = ua.DataValue(ua.Variant(str(newValue), ua.VariantType.String))
                     var.set_value(dv)
                 else:
-                    print("incorrect opcua type")
+                    print(f"incorrect opcua type: {opcuaType}")
                 
         if debug:
             print(f"on_epics_pv_update pv: {epicsPvName} opcua currentValue: {currentValue}")
@@ -163,7 +193,26 @@ if __name__ == "__main__":
                     
                     epicsPvs[epicsPvName]["pv"]=builder.aIn(epicsPvName,**fields)
                     epicsPvs[epicsPvName]["epicsType"]="AI"
+                if "STRINGIN" in epicsType:
+                    opcuaName=str(record.fields["INP"])
+                    fields={}
+                    for field in record.fields:
+                        upper=str(field).upper()
+                        if upper in ["DESC"]:
+                            fields[upper]=record.fields[field]
                     
+                    epicsPvs[epicsPvName]["pv"]=builder.stringIn(epicsPvName,**fields)
+                    epicsPvs[epicsPvName]["epicsType"]="STRINGIN"   
+                if "STRINGOUT" in epicsType:
+                    opcuaName=str(record.fields["INP"])
+                    fields={}
+                    for field in record.fields:
+                        upper=str(field).upper()
+                        if upper in ["DESC"]:
+                            fields[upper]=record.fields[field]
+                    
+                    epicsPvs[epicsPvName]["pv"]=builder.stringOut(epicsPvName,on_update=partial(on_epics_pv_update,opcuaClientName=name,epicsPvName=epicsPvName,epicsType=epicsType,opcuaName=opcuaName,opcuaType=opcuaType,opcuaClients=clients,debug=debug,**fields),**fields)
+                    epicsPvs[epicsPvName]["epicsType"]="STRINGOUT"   
 
                 if "AO" in epicsType:
                     opcuaName=str(record.fields["OUT"])
