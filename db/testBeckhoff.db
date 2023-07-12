@@ -1,3 +1,5 @@
+# test records for all opcua datatypes serverd from a beckhoff plc using OPCUA
+
 record(ai, "Beckhoff:tick")
 {       
         field(DTYP,"OPCUA_Int64")
