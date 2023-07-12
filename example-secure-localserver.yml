@@ -15,6 +15,7 @@ services:
       - subscriptionRate=100
       # - debug=True
       - secure=True
+    command: "/bin/sh -c 'sleep 5; python bridge.py;'"
     volumes:
       - ./certificates:/certificates/
       - ./db/test.db:/bridge/bridge.db

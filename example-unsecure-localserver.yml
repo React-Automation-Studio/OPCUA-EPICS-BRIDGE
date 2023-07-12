@@ -11,10 +11,11 @@ services:
     env_file: .env
     environment:
       - name=OpcuaTest1
-      - url=opc.tcp://test_user@0.0.0.0:4840
+      - url=opc.tcp://0.0.0.0:4840
       - subscriptionRate=100
       # - debug=True
       - secure=False
+    command: "/bin/sh -c 'sleep 5; python bridge.py;'"
     volumes:
       - ./certificates:/certificates/
       - ./db/test.db:/bridge/bridge.db
