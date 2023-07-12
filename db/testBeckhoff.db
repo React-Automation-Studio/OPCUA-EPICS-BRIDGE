@@ -55,6 +55,8 @@ record(ao, "Beckhoff:AoInt32")
         field(DTYP,"OPCUA_Int32")
         field(OUT, "ns=4;s=GVL.AoInt32")
         field(DESC, "Ao int32 ")
+        field(HOPR, "2147483647")
+        field(LOPR, "-2147483648")
         field(PREC, "0")
 }
 
@@ -115,6 +117,7 @@ record(ai, "Beckhoff:AiFloat")
         field(DTYP,"OPCUA_Float")
         field(INP, "ns=4;s=GVL.AiFloat")
         field(DESC, "Ai Float ")
+        
         field(PREC, "3")
 }
 record(ao, "Beckhoff:AoFloat")
@@ -122,6 +125,8 @@ record(ao, "Beckhoff:AoFloat")
         field(DTYP,"OPCUA_Float")
         field(OUT, "ns=4;s=GVL.AoFloat")
         field(DESC, "Ao Float ")
+        field(HOPR, "1e6")
+        field(LOPR, "-1e6")
         field(PREC, "3")
 }
 
@@ -137,6 +142,8 @@ record(ao, "Beckhoff:AoDouble")
         field(DTYP,"OPCUA_Double")
         field(OUT, "ns=4;s=GVL.AoDouble")
         field(DESC, "Ao Double ")
+        field(HOPR, "1e12")
+        field(LOPR, "-1e12")
         field(PREC, "6")
 }
 
