@@ -36,7 +36,6 @@ async def main():
     # uri = "http://examples.freeopcua.github.io"
     # idx = await server.register_namespace(uri)
     idx=4
-    print(idx)
     # populating our address space
     # server.nodes, contains links to very common nodes like objects and root
     OpcuaTests = await server.nodes.objects.add_object(idx, "OpcuaTests")
