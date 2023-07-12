@@ -12,27 +12,14 @@ services:
     environment:
       - name=OpcuaTest1
       - url=opc.tcp://test_user@0.0.0.0:4840
-      - subscriptionRate=1000
+      - subscriptionRate=100
       # - debug=True
       - secure=True
     volumes:
       - ./certificates:/certificates/
       - ./db/test.db:/bridge/bridge.db
-  opcuasimpleclient:
-    build:
-      context: ./
-      dockerfile: docker/opcuaSimple/Dockerfile
-    restart: always
-    network_mode: host
-    tty: true
-    stdin_open: true
-    command: "/bin/sh -c 'sleep 2 ; python client-minimal.py;'"
-    env_file: .env
-    environment:
-      - secure=True
-    volumes:
-      - ./certificates:/certificates/
-  opcuasimpleserver:
+  
+  opcuapythonserver:
     build:
       context: ./
       dockerfile: docker/opcuaSimple/Dockerfile
