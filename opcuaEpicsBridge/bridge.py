@@ -58,8 +58,9 @@ class SubHandler(object):
                     self.epicsPvs[epicsName]["pv"].set(str(val))
                 self.epicsPvs[epicsName]["initialized"]=True
             else:
-                self.epicsPvs[epicsName]["pv"].set(val)
-                self.epicsPvs[epicsName]["initialized"]=True
+                if val is not None:
+                    self.epicsPvs[epicsName]["pv"].set(val)
+                    self.epicsPvs[epicsName]["initialized"]=True
 
     def event_notification(self, event):
         if self.debug:
