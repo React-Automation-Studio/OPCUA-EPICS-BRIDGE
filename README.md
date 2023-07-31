@@ -29,21 +29,19 @@ git clone --recurse-submodules git@github.com:React-Automation-Studio/OPCUA-EPIC
 The systems uses Docker to create isolated production and development environments. There are several docker-compose configuration files.
 
 
-Firstly bring up the demo OPCUA server in a terminal.
+Firstly bring up the demo unsecure OPCUA server in a terminal.
 
 ```bash
-docker compose -f docker-compose-simple.yml up --build
+docker compose -f git@github.com:React-Automation-Studio/OPCUA-EPICS-BRIDGE.git up --build
 ```
 
-Then bring up the demo OPCUA-EPICS bridge with:
+This will load an opcua  server test variables and the Epics bridge with variables declare in the db/test.tb
 
-```bash
-docker compose  up --build
-```
-or
-```bash
-docker compose -f docker-compose.yml up --build
-```
+The Epics process variables can then be access via any Epics client such as caput, caget and cainfo fr example or through a  the GUI avialable at:
+
+https://github.com/wduckitt/React-Automation-Studio-Example-OPCUA.git
+
+
 
 
 # 38 Contact
