@@ -37,7 +37,7 @@ docker compose -f git@github.com:React-Automation-Studio/OPCUA-EPICS-BRIDGE.git 
 
 This will load an opcua  server test variables and the Epics bridge with variables declare in the db/test.tb
 
-The Epics process variables can then be access via any Epics client such as caput, caget and cainfo fr example or through a  the GUI avialable at:
+The Epics process variables can then be access via any Epics client such as caput, caget and cainfo for example or through a the GUI available at:
 
 https://github.com/wduckitt/React-Automation-Studio-Example-OPCUA.git
 
