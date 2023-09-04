@@ -8,7 +8,6 @@ services:
     network_mode: host
     tty: true
     stdin_open: true
-    env_file: .env
     environment:
       - name=OpcuaTest1
       - url=opc.tcp://0.0.0.0:4840
@@ -29,7 +28,6 @@ services:
     tty: true
     stdin_open: true
     command: "/bin/sh -c 'python server-minimal.py;'"
-    env_file: .env
     environment:
       - secure=False
     volumes:
