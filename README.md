@@ -6,7 +6,7 @@ manufacturer independent communication to vendor specific PLCs, for example. Wit
 an OPC UA to EPICS bridge that has been containerized with Docker to provide a microservice for communicating
 between EPICS and OPC UA variables.
 
-<img src="./img/microservice.png" alt="drawing" width="90%"/>
+<img src="./img/microservice.PNG" alt="drawing" width="90%"/>
 
 
 # 1 Installation
