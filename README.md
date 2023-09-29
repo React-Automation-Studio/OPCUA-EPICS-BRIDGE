@@ -7,7 +7,7 @@ an OPC UA to EPICS bridge that has been containerized with Docker to provide a m
 between EPICS and OPC UA variables.
 
 
-<img src="./img/diagram.PNG" alt="drawing" width="25%"/>
+<img src="./img/diagram.PNG" alt="drawing" width="40%"/>
 
 Figure 1 shows how the system may be deployed with multiple EPICS clients communicating to two PLCs though two OPC UA EPICS bridges.
 
@@ -16,7 +16,7 @@ Figure 1 shows how the system may be deployed with multiple EPICS clients commun
 A high-level state machine diagram of implementation of the OPC UA EPICS bridge microservice is shown in Figure 1. The microservice is written in Python and 
 containerized with Docker. 
 
-<img src="./img/microservice.PNG" alt="drawing" width="25%"/>
+<img src="./img/microservice.PNG" alt="drawing" width="40%"/>
 
 In particular, we make of the dbtoolspy project, Python SoftIOC project and OPCUA-asyncio modules to implement the system. Descriptions
 of the states of the service are given below:
@@ -78,10 +78,10 @@ git clone --recurse-submodules https://github.com/React-Automation-Studio/OPCUA-
 
 
 # 2 Launching the Docker compose files
-The systems uses Docker to create isolated production and development environments. There are several docker-compose configuration files.
+There are several docker-compose configuration files.
 
 ## Python Unsecure Server 
-Firstly bring up the Python demo unsecure OPCUA server in a terminal. I tbundle a Python OPC UA  server and the bridge together.
+Firstly bring up the Python demo unsecure OPCUA server in a terminal. Itbundle a Python OPC UA  server and the bridge together.
 
 In the root folder run:
 ```bash
