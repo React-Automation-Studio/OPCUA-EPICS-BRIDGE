@@ -1,3 +1,14 @@
+# Introduction 
+
+OPC UA is a service-orientated communication architecture  that supports platform-independent, data exchange between
+embedded microcontrollers, PLCs or PCs and cloudbased infrastructure. This makes OPC UA ideal for developing
+manufacturer independent communication to vendor specific PLCs, for example. With this in mind, we present
+an OPC UA to EPICS bridge that has been containerized with Docker to provide a microservice for communicating
+between EPICS and OPC UA variables.
+
+<img src="./img/microservice.png" alt="drawing" width="90%"/>
+
+
 # 1 Installation
 This system has been containerized with Docker.
 
