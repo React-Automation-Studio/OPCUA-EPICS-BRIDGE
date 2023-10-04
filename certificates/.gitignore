@@ -2,5 +2,5 @@
 *
 # Except this file
 !.gitignore
-!generate_certificate_example.sh
-!generate_peer_certificate_example1.sh
+!generate_example_client_certificate.sh
+!generate_example_server_certificate.sh
