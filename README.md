@@ -12,7 +12,7 @@ between EPICS and OPC UA variables.
 Figure 1 shows how the system may be deployed with multiple EPICS clients communicating to two PLCs though two OPC UA EPICS bridges.
 
 
-# SYSTEM OVERVIEW
+# System Overview
 The OPCUA EPICS Bridge is written in Python and 
 containerized with Docker. We make of the dbtoolspy project, Python SoftIOC project and OPCUA-asyncio modules to implement the system. 
 The Docker environment variables determine the uniform resource locator (URL) of the OPC UA server, the subscription rate, the EPICS record file to use,
@@ -24,7 +24,7 @@ If no exceptions occur, then the bridge is kept alive indefinitely. If an except
 
 When the microservice is stopped or an exception occurs, the system will exit. All the listening EPICS clients will therefore get a channel access (CA) exception notification. If the microservice is configured to restart, then connectivity will resume on the EPICS CA when the new instance of the bridge establishes connection.
 
-# CONFIGURATION AND DEPLOYMENT
+# Configuration and deployment
 The system is designed to be orchestrated with Docker Compose, although any other orchestration system such as Kubernetes can be used by porting the configuration file. Example YML configuration files are available in root folder.
 
 
@@ -128,9 +128,116 @@ Note the UA expert will require you to trust the server's certificate.
 Also you must copy client.der and client_private_key.pem to your local folder and make sure the UAExpert authentication setting are set to use the certificate and private key.
 
 
+## Twincat Test Server
+
+### Unsecure mode
+We provide the source code for a test PLC for Twincat at https://github.com/React-Automation-Studio/OPCUA-TwinCAT-Example-Project
+
+It requires extensive knowledge of the TwinCAT environment.
+You will need to port to your version of PLC, but effectively the PLC project create PLC variables that when served over OPC UA present themselves as variables equivalent to the Python Test serve above.
+
+Once the PLC is up and running and serving the variables over OPC UA, we recommend first using UAExpert to independently connect to the PLC. 
+
+If UA Expert can connect, then in the root folder modify the URL parameter example-unsecure-beckhoff-server.yml to match the URL of the OPC UA server.
+ 
+Then launch:
+
+```bash
+docker compose  -f example-unsecure-beckhoff-server.yml  up --build
+```
+
+This will connect to the OPC UA server anonymously, if the PLC allows anonymous connections. 
+
+The Epics process variables can then be accessed via any Epics client such as caput, caget and cainfo for example or through a the GUI available at:
+
+https://github.com/wduckitt/React-Automation-Studio-Example-OPCUA.git
+
+
+### Secure mode
+If a secure connection is required you will need to copy, modify the example-unsecure-beckhoff-server.yml and generate your own client certificates.
+
+In this modified yml file change the - secure=False parameter to True and modify the URL parameter to match the URL of the OPC UA server.
+
+
+You must generate your own client certificates for authentication. For testing purposes, you can use the script in certificates folder to generate the client certificate.
 
 
 
-# 38 Contact
+In the certificates folder run:
+```bash
+./generate_example_client_certificate.sh
+```
+This will create the certificates/client.der certificates/client_private_key.pem files.
+
+If you use another method to generate your client certificates you must either copy them into the certificates folder and call them client.der and client_private_key.pem or mount them inthe certificates folder with the names client.der and client_private_key.pem.
+
+Once you have created the certificates you can launch the bridge.
+
+
+
+In the root folder run:
+```bash
+docker compose  -f example-secure-localserver.yml  up --build
+```
+Where example-secure-localserver corresponds to the name of the yml file you created. 
+
+
+This will load the OPC UA Epics bridge with variables declare in the db/testBeckhoff.tb
+
+
+Like with the other methods the Epics process variables can then be accessed via any Epics client such as caput, caget and cainfo for example or through a the GUI available at:
+
+https://github.com/wduckitt/React-Automation-Studio-Example-OPCUA.git
+ 
+# Recipe for Connecting to another OPC UA Server on a new PLC
+1. Install the manufacturers OPC UA server on the PLC.
+2. Expose the necessary variables over OPC UA.
+3. Configure the OPC UA Server in anonymous or secure mode. If secure mode is used, then generate the client certificates.
+4. Next, independently verify connection to the OPC UA server using  UAExpert.
+5. Take note of the namespace index and string connection of the variables from available on the attributes tab of the variable in UAExpert.
+5. Copy the db/testBeckhoff.db and give it a name of your choice. Modify the variables to match your OPC UA variables.
+6. Copy and modify the example-unsecure-beckhoff-server.yml and modify it similarly to the steps in the previous section.
+7. Then launch this new yml file.
+
+# Notes:
+
+Table 1: Compatibility between OPC UA data types, PLC data types and EPICS records and the OPC UA EPICS bridge
+DTYP
+
+<img src="./img/table.PNG" alt="drawing" width="75%"/>
+
+
+```bash
+record(ai, "Beckhoff:tick")
+{       
+        field(DTYP,"OPCUA_Int64")
+        field(INP, "ns=4;s=GVL.tick")
+        field(DESC, "tick")
+}
+
+record(ao, "Beckhoff:AoInt32")
+{       
+        field(DTYP,"OPCUA_Int32")
+        field(OUT, "ns=4;s=GVL.AoInt32")
+        field(DESC, "Ao int32 ")
+        field(HOPR, "2147483647")
+        field(LOPR, "-2147483648")
+        field(PREC, "0")
+}
+
+```
+As the example record snippets above, the INP field contains a string to connect to the OPC UA variable. You can easily extract the namespace and connection string from UAExpert, like in the image below:
+
+<img src="./img/uaexpert.PNG" alt="drawing" width="75%"/>
+
+For EPICS AO records you must set the HOPR  and LOPR to the min and max values aloud for the PLC variable type or to the upper and lower bound of PLC variables setpoints. See all the examples in the test.db files for the absolute max and min HOPR and LOPR fields for the corresponding OPC UA data type.
+
+
+
+
+
+
+
+# Contact
 
 Contact us at Github Discussions: https://github.com/React-Automation-Studio/React-Automation-Studio/discussions
