@@ -13,12 +13,12 @@ Figure 1 shows how the system may be deployed with multiple EPICS clients commun
 
 
 # SYSTEM OVERVIEW
-The microservice is written in Python and 
+The OPCUA EPICS Bridge is written in Python and 
 containerized with Docker. We make of the dbtoolspy project, Python SoftIOC project and OPCUA-asyncio modules to implement the system. 
 The Docker environment variables determine the uniform resource locator (URL) of the OPC UA server, the subscription rate, the EPICS record file to use,
 and whether to connect securly to the server.
 
-The microservice loads EPICS records that describe the relationship between the OPC UA and EPICS variables. The system connection to the OPC UA server and creates an EPIC IOC for the variables. We link between the OPC UA Client variables and the EPICS IOC PV’s data change callbacks based on the information loaded db fle. The callbacks perform type checking, and type cast the new values between the data types used internally in the OPC UA and EPICS.
+The microservice loads EPICS records that describe the relationship between the OPC UA and EPICS variables. The system establishes connection to the OPC UA server and creates an EPIC IOC for the variables. It links between the OPC UA Client variables and the EPICS IOC PV’s data change callbacks based on the information loaded db fle. The callbacks perform type checking, and type cast the new values between the data types used internally in the OPC UA and EPICS.
 
 If no exceptions occur, then the bridge is kept alive indefinitely. If an exception occurs, for example, if the PLC is rebooted, a connectivity exception will be thrown and the bridge service will exit.
 
@@ -62,7 +62,7 @@ git clone --recurse-submodules https://github.com/React-Automation-Studio/OPCUA-
 There are several docker-compose configuration files.
 
 ## Python Unsecure Server 
-Firstly bring up the Python demo unsecure OPCUA server in a terminal. Itbundle a Python OPC UA  server and the bridge together.
+Firstly bring up the Python demo unsecure OPCUA server in a terminal. It bundles a testing Python OPC UA  server and the bridge together.
 
 In the root folder run:
 ```bash
