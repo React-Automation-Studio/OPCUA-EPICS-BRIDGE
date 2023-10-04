@@ -13,35 +13,16 @@ Figure 1 shows how the system may be deployed with multiple EPICS clients commun
 
 
 # SYSTEM OVERVIEW
-A high-level state machine diagram of implementation of the OPC UA EPICS bridge microservice is shown in Figure 1. The microservice is written in Python and 
-containerized with Docker. 
-
-<img src="./img/microservice.PNG" alt="drawing" width="40%"/>
-
-In particular, we make of the dbtoolspy project, Python SoftIOC project and OPCUA-asyncio modules to implement the system. Descriptions
-of the states of the service are given below:
-## Start
-When the service is started, environment variables are passed to the service. These environment variables determine
-the uniform resource locator (URL) of the OPC UA server, the subscription rate, the EPICS record file to use,
+The microservice is written in Python and 
+containerized with Docker. We make of the dbtoolspy project, Python SoftIOC project and OPCUA-asyncio modules to implement the system. 
+The Docker environment variables determine the uniform resource locator (URL) of the OPC UA server, the subscription rate, the EPICS record file to use,
 and whether to connect securly to the server.
-## Load DB file 
-Thereafter, we use dbtoolspy to load EPICS records that describe the relationship between the OPC UA and EPICS variables. The dbtoolspy module conveniently loads the record information and exposes this as a dictionary in Python.
 
-## Create OPC UA Client
-We make use of the Python Opcua-asyncio open source project to establish a client connection to a OPC UA server. We use the information loaded in the proceeding step to configure the subscriptions to each of the OPC UA
-variables. The EPICS DTYP, INP and OUT field is used to make the correct subscription type to each of the variables. As mentioned previously, the URL of the server and the subscription rate are passed to the service as environment
-variables.
-## Create EPICS PVs 
-We use the Python SoftIOC project to establish each of the EPICS process variables (PVs) for the EPICS input output controller (IOC). We use the information loaded in the Load DB file step to configure each of the EPICS PVs.
+The microservice loads EPICS records that describe the relationship between the OPC UA and EPICS variables. The system connection to the OPC UA server and creates an EPIC IOC for the variables. We link between the OPC UA Client variables and the EPICS IOC PV’s data change callbacks based on the information loaded db fle. The callbacks perform type checking, and type cast the new values between the data types used internally in the OPC UA and EPICS.
 
-## Link EPICS PVs and OPC UA variables
-Finally, we link between the OPC UA Client variables and the EPICS IOC PV’s data change callbacks based on the information loaded in the Load DB file step. The callbacks perform type checking, and type cast the new values between
-the data types used internally in the OPC UA and EPICS.
-## Run
-If no exceptions occur during the loading of previous steps, then the bridge is kept alive indefinitely. If an exception occurs, for example, if the PLC is rebooted, a connectivity exception will be thrown and the bridge service will exit.
-## Exit
-When the microservice is stopped or an exception occurs, the system will exit. All the listening EPICS clients will therefore get a channel access (CA) exception notification. If the microservice is configured to restart, then connectivity will resume on the EPICS CA when the new instance
-of the bridge establishes connection.
+If no exceptions occur, then the bridge is kept alive indefinitely. If an exception occurs, for example, if the PLC is rebooted, a connectivity exception will be thrown and the bridge service will exit.
+
+When the microservice is stopped or an exception occurs, the system will exit. All the listening EPICS clients will therefore get a channel access (CA) exception notification. If the microservice is configured to restart, then connectivity will resume on the EPICS CA when the new instance of the bridge establishes connection.
 
 # CONFIGURATION AND DEPLOYMENT
 The system is designed to be orchestrated with Docker Compose, although any other orchestration system such as Kubernetes can be used by porting the configuration file. Example YML configuration files are available in root folder.
@@ -99,6 +80,7 @@ https://github.com/wduckitt/React-Automation-Studio-Example-OPCUA.git
 You can also use UAexpert to verify if the server is running on:
  opc.tcp://localhost:4840/freeopcua/server/
 
+UAExpert is available at https://www.unified-automation.com/products/development-tools/uaexpert.html
 
 
 
