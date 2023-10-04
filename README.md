@@ -61,7 +61,7 @@ git clone --recurse-submodules https://github.com/React-Automation-Studio/OPCUA-
 # 2 Launching the Docker compose files
 There are several docker-compose configuration files.
 
-## Python Unsecure Server 
+## Python Unsecure Test OPC UA Server 
 Firstly bring up the Python demo unsecure OPCUA server in a terminal. It bundles a testing Python OPC UA  server and the bridge together.
 
 In the root folder run:
@@ -81,6 +81,53 @@ You can also use UAexpert to verify if the server is running on:
  opc.tcp://localhost:4840/freeopcua/server/
 
 UAExpert is available at https://www.unified-automation.com/products/development-tools/uaexpert.html
+
+
+## Python Secure Test OPC UA Server 
+
+It can be tricky to create the secure server and generate the certificates. Therefore, for testing purposes, we provide two scripts in certificates folder to generate the server and the client certificates.
+
+In the certificates folder run:
+```bash
+./generate_example_server_certificate.sh
+```
+This will create the certificates/server.der certificates/server_private_key.pem files.
+
+The Python OPCUA test server needs them to start the server in a secure mode.
+
+Next, in the certificates folder run:
+```bash
+./generate_example_client_certificate.sh
+```
+This will create the certificates/client.der certificates/client_private_key.pem files.
+
+The Pyhton OPC UA test server the requires the client certificate to grant access and is loaded at run time.
+
+Once you have created the example certificates you can launch the secure server.
+
+
+
+In the root folder run:
+```bash
+docker compose  -f example-secure-localserver.yml  up --build
+```
+
+
+This will load opc ua  server test variables and the Epics bridge with variables declare in the db/test.tb
+
+The Epics process variables can then be accessed via any Epics client such as caput, caget and cainfo for example or through a the GUI available at:
+
+https://github.com/wduckitt/React-Automation-Studio-Example-OPCUA.git
+
+
+Like with the unsecure mode, you can use UAexpert to verify if the server is running on:
+ opc.tcp://localhost:4840/freeopcua/server/
+
+Note the UA expert will require you to trust the server's certificate.
+
+Also you must copy client.der and client_private_key.pem to your local folder and make sure the UAExpert authentication setting are set to use the certificate and private key.
+
+
 
 
 
