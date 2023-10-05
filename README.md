@@ -1,3 +1,4 @@
+Current release: V1.0.0
 # Introduction 
 
 OPC UA is a service-orientated communication architecture  that supports platform-independent, data exchange between
