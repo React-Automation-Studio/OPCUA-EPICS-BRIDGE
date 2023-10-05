@@ -1,5 +1,5 @@
-asyncio
-asyncua
-cryptography
-softioc
-cothread
+asyncio==3.4.3
+asyncua==1.0.2
+cryptography==41.0.1
+softioc==4.3.0
+cothread==2.18.3

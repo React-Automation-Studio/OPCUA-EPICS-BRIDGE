@@ -1,2 +1,2 @@
-asyncio
-asyncua 
+asyncio==3.4.3
+asyncua==1.0.2
