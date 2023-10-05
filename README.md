@@ -85,7 +85,7 @@ UAExpert is available at https://www.unified-automation.com/products/development
 
 ## Python Secure Test OPC UA Server 
 
-It can be tricky to create the secure server and generate the certificates. Therefore, for testing purposes, we provide two scripts in certificates folder to generate the server and the client certificates.
+It can be tricky to create the secure server and generate the certificates. Therefore, for testing purposes, we provide two scripts in the certificates folder to generate the server and the client certificates.
 
 In the certificates folder run:
 ```bash
@@ -113,7 +113,7 @@ docker compose  -f example-secure-localserver.yml  up --build
 ```
 
 
-This will load opc ua  server test variables and the Epics bridge with variables declare in the db/test.tb
+This will load OPC UA  server test variables and the Epics bridge with variables declare in the db/test.tb
 
 The Epics process variables can then be accessed via any Epics client such as caput, caget and cainfo for example or through a the GUI available at:
 
@@ -125,7 +125,7 @@ Like with the unsecure mode, you can use UAexpert to verify if the server is run
 
 Note the UA expert will require you to trust the server's certificate.
 
-Also you must copy client.der and client_private_key.pem to your local folder and make sure the UAExpert authentication setting are set to use the certificate and private key.
+Also you must copy client.der and client_private_key.pem to your local folder and make sure the UAExpert authentication settings are set to use the certificate and private key.
 
 
 ## Twincat Test Server
@@ -134,11 +134,12 @@ Also you must copy client.der and client_private_key.pem to your local folder an
 We provide the source code for a test PLC for Twincat at https://github.com/React-Automation-Studio/OPCUA-TwinCAT-Example-Project
 
 It requires extensive knowledge of the TwinCAT environment.
-You will need to port to your version of PLC, but effectively the PLC project create PLC variables that when served over OPC UA present themselves as variables equivalent to the Python Test serve above.
+
+You will need to port to your version of PLC, but effectively the PLC project creates PLC variables that when served over OPC UA present themselves as variables equivalent to the Python Test serve above.
 
 Once the PLC is up and running and serving the variables over OPC UA, we recommend first using UAExpert to independently connect to the PLC. 
 
-If UA Expert can connect, then in the root folder modify the URL parameter example-unsecure-beckhoff-server.yml to match the URL of the OPC UA server.
+If UAExpert can connect, then in the root folder modify the URL parameter example-unsecure-beckhoff-server.yml to match the URL of the OPC UA server. Note: you may need to setup the PLC OPC UA server to accept anonymous connections.
  
 Then launch:
 
@@ -154,6 +155,7 @@ https://github.com/wduckitt/React-Automation-Studio-Example-OPCUA.git
 
 
 ### Secure mode
+
 If a secure connection is required you will need to copy, modify the example-unsecure-beckhoff-server.yml and generate your own client certificates.
 
 In this modified yml file change the - secure=False parameter to True and modify the URL parameter to match the URL of the OPC UA server.
@@ -169,7 +171,7 @@ In the certificates folder run:
 ```
 This will create the certificates/client.der certificates/client_private_key.pem files.
 
-If you use another method to generate your client certificates you must either copy them into the certificates folder and call them client.der and client_private_key.pem or mount them inthe certificates folder with the names client.der and client_private_key.pem.
+If you use another method to generate your client certificates you must either copy them into the certificates folder and call them client.der and client_private_key.pem or mount them in the certificates folder with the names client.der and client_private_key.pem.
 
 Once you have created the certificates you can launch the bridge.
 
@@ -182,7 +184,7 @@ docker compose  -f example-secure-localserver.yml  up --build
 Where example-secure-localserver corresponds to the name of the yml file you created. 
 
 
-This will load the OPC UA Epics bridge with variables declare in the db/testBeckhoff.tb
+This will load the OPC UA Epics bridge with variables declared in the db/testBeckhoff.tb
 
 
 Like with the other methods the Epics process variables can then be accessed via any Epics client such as caput, caget and cainfo for example or through a the GUI available at:
@@ -192,11 +194,11 @@ https://github.com/wduckitt/React-Automation-Studio-Example-OPCUA.git
 # Recipe for Connecting to another OPC UA Server on a new PLC
 1. Install the manufacturers OPC UA server on the PLC.
 2. Expose the necessary variables over OPC UA.
-3. Configure the OPC UA Server in anonymous or secure mode. If secure mode is used, then generate the client certificates.
+3. Configure the OPC UA Server in anonymous i.e. unsecure mode or secure mode. If secure mode is used, then generate the client certificates.
 4. Next, independently verify connection to the OPC UA server using  UAExpert.
-5. Take note of the namespace index and string connection of the variables from available on the attributes tab of the variable in UAExpert.
+5. Take note of the namespace index and string connection of the variables from available on the attributes tab of the variable in UAExpert. (Ssee the notes below)
 5. Copy the db/testBeckhoff.db and give it a name of your choice. Modify the variables to match your OPC UA variables.
-6. Copy and modify the example-unsecure-beckhoff-server.yml and modify it similarly to the steps in the previous section.
+6. Copy and modify the example-unsecure-beckhoff-server.yml and modify it similarly to the steps in the previous section. Take note you might want to  alter the name, URL and subscriptionRate parameter too.
 7. Then launch this new yml file.
 
 # Notes:
