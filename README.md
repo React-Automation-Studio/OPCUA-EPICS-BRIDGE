@@ -197,18 +197,19 @@ https://github.com/wduckitt/React-Automation-Studio-Example-OPCUA.git
 2. Expose the necessary variables over OPC UA.
 3. Configure the OPC UA Server in anonymous i.e. unsecure mode or secure mode. If secure mode is used, then generate the client certificates.
 4. Next, independently verify connection to the OPC UA server using  UAExpert.
-5. Take note of the namespace index and string connection of the variables from available on the attributes tab of the variable in UAExpert. (Ssee the notes below)
+5. Take note of the namespace index and string connection of the variables from available on the attributes tab of the variable in UAExpert. (See the notes below)
 5. Copy the db/testBeckhoff.db and give it a name of your choice. Modify the variables to match your OPC UA variables.
 6. Copy and modify the example-unsecure-beckhoff-server.yml and modify it similarly to the steps in the previous section. Take note you might want to  alter the name, URL and subscriptionRate parameter too.
 7. Then launch this new yml file.
 
 # Notes:
-
+## Compatibility
 Table 1: Compatibility between OPC UA data types, PLC data types and EPICS records and the OPC UA EPICS bridge
 DTYP
 
 <img src="./img/table.PNG" alt="drawing" width="75%"/>
 
+## EPICS records and OPC UA connection string
 
 ```bash
 record(ai, "Beckhoff:tick")
@@ -236,7 +237,20 @@ As the example record snippets above, the INP field contains a string to connect
 For EPICS AO records you must set the HOPR  and LOPR to the min and max values aloud for the PLC variable type or to the upper and lower bound of PLC variables setpoints. See all the examples in the test.db files for the absolute max and min HOPR and LOPR fields for the corresponding OPC UA data type.
 
 
+## Deafult compose environment variables:
+```bash
 
+environment:
+      - name=OpcuaTest1  ### name of the OPC UA server
+      - url=opc.tcp://0.0.0.0:4840  ### URL of the OPC UA server
+      - subscriptionRate=100  ### subscription rate in milliseconds
+      # - debug=True  ### will print debug message in development mode
+      - secure=True   ### start the OPC UA connection in secure / unsercure mode
+```
+
+## Limitations
+ The EPICS records don't currently support forward linking, or macro substitutions.
+ If we have missed loading a field for one of the EPICS record types, lets us know.
 
 
 
