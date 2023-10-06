@@ -30,7 +30,7 @@ The system is designed to be orchestrated with Docker Compose, although any othe
 
 
 
-Prerequisites: git, latest version of docker-ce and docker compose 
+**Prerequisites: git, latest version of docker-ce and docker compose** 
 
 
 To install docker-ce  and docker compose on Ubuntu follow:
