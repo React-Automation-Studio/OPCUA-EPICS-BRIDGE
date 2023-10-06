@@ -32,7 +32,6 @@ The system is designed to be orchestrated with Docker Compose, although any othe
 
 Prerequisites: git, latest version of docker-ce and docker compose 
 
-( At the time of writing the system used Docker V23.0.3 and docker compose V2.17.2 )
 
 To install docker-ce  and docker compose on Unbuntu follow:
 
