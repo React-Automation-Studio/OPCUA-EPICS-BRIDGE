@@ -113,7 +113,7 @@ docker compose  -f example-secure-localserver.yml  up --build
 ```
 
 
-This will load OPC UA  server test variables and the Epics bridge with variables declare in the db/test.tb
+This will load OPC UA  server test variables and the Epics bridge with variables declare in the db/test.tb folder.
 
 The Epics process variables can then be accessed via any Epics client such as caput, caget and cainfo for example or through a the GUI available at:
 
