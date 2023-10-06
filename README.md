@@ -135,7 +135,7 @@ We provide the source code for a test PLC for Twincat at https://github.com/Reac
 
 It requires extensive knowledge of the TwinCAT environment.
 
-You will need to port to your version of PLC, but effectively the PLC project creates PLC variables that when served over OPC UA present themselves as variables equivalent to the Python Test serve above.
+You will need to port to your version of PLC, but effectively the PLC project creates PLC variables that when served over OPC UA present themselves as variables equivalent to the Python Test server above.
 
 Once the PLC is up and running and serving the variables over OPC UA, we recommend first using UAExpert to independently connect to the PLC. 
 
