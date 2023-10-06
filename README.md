@@ -2,7 +2,7 @@ Current release: V1.0.0
 # Introduction 
 
 OPC UA is a service-orientated communication architecture  that supports platform-independent, data exchange between
-embedded microcontrollers, PLCs or PCs and cloudbased infrastructure. This makes OPC UA ideal for developing
+embedded microcontrollers, PLCs or PCs and cloud-based infrastructure. This makes OPC UA ideal for developing
 manufacturer independent communication to vendor specific PLCs, for example. With this in mind, we present
 an OPC UA to EPICS bridge that has been containerized with Docker to provide a microservice for communicating
 between EPICS and OPC UA variables.
@@ -17,9 +17,9 @@ Figure 1 shows how the system may be deployed with multiple EPICS clients commun
 The OPCUA EPICS Bridge is written in Python and 
 containerized with Docker. We make of the dbtoolspy project, Python SoftIOC project and OPCUA-asyncio modules to implement the system. 
 The Docker environment variables determine the uniform resource locator (URL) of the OPC UA server, the subscription rate, the EPICS record file to use,
-and whether to connect securly to the server.
+and whether to connect securely to the server.
 
-The microservice loads EPICS records that describe the relationship between the OPC UA and EPICS variables. The system establishes connection to the OPC UA server and creates an EPIC IOC for the variables. It links between the OPC UA Client variables and the EPICS IOC PV’s data change callbacks based on the information loaded db fle. The callbacks perform type checking, and type cast the new values between the data types used internally in the OPC UA and EPICS.
+The microservice loads EPICS records that describe the relationship between the OPC UA and EPICS variables. The system establishes connection to the OPC UA server and creates an EPIC IOC for the variables. It links between the OPC UA Client variables and the EPICS IOC PV’s data change callbacks based on the information loaded db file. The callbacks perform type checking, and type cast the new values between the data types used internally in the OPC UA and EPICS.
 
 If no exceptions occur, then the bridge is kept alive indefinitely. If an exception occurs, for example, if the PLC is rebooted, a connectivity exception will be thrown and the bridge service will exit.
 
@@ -33,7 +33,7 @@ The system is designed to be orchestrated with Docker Compose, although any othe
 Prerequisites: git, latest version of docker-ce and docker compose 
 
 
-To install docker-ce  and docker compose on Unbuntu follow:
+To install docker-ce  and docker compose on Ubuntu follow:
 
 https://docs.docker.com/engine/install/ubuntu/
 
@@ -62,7 +62,7 @@ git clone --recurse-submodules https://github.com/React-Automation-Studio/OPCUA-
 There are several docker-compose configuration files.
 
 ## Python Unsecure Test OPC UA Server 
-Firstly bring up the Python demo unsecure OPCUA server in a terminal. It bundles a testing Python OPC UA  server and the bridge together.
+Firstly, bring up the Python demo unsecure OPCUA server in a terminal. It bundles a testing Python OPC UA  server and the bridge together.
 
 In the root folder run:
 ```bash
@@ -101,7 +101,7 @@ Next, in the certificates folder run:
 ```
 This will create the certificates/client.der certificates/client_private_key.pem files.
 
-The Pyhton OPC UA test server the requires the client certificate to grant access and is loaded at run time.
+The Python OPC UA test server the requires the client certificate to grant access and is loaded at run time.
 
 Once you have created the example certificates you can launch the secure server.
 
@@ -115,7 +115,7 @@ docker compose  -f example-secure-localserver.yml  up --build
 
 This will load OPC UA  server test variables and the Epics bridge with variables declare in the db/test.tb folder.
 
-The Epics process variables can then be accessed via any Epics client such as caput, caget and cainfo for example or through a the GUI available at:
+The Epics process variables can then be accessed via any Epics client such as caput, caget and cainfo for example or through a GUI available at:
 
 https://github.com/wduckitt/React-Automation-Studio-Example-OPCUA.git
 
@@ -149,7 +149,7 @@ docker compose  -f example-unsecure-beckhoff-server.yml  up --build
 
 This will connect to the OPC UA server anonymously, if the PLC allows anonymous connections. 
 
-The Epics process variables can then be accessed via any Epics client such as caput, caget and cainfo for example or through a the GUI available at:
+The Epics process variables can then be accessed via any Epics client such as caput, caget and cainfo for example or through a GUI available at:
 
 https://github.com/wduckitt/React-Automation-Studio-Example-OPCUA.git
 
