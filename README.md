@@ -236,7 +236,7 @@ As the example record snippets above, the INP field contains a string to connect
 For EPICS AO records you must set the HOPR  and LOPR to the min and max values aloud for the PLC variable type or to the upper and lower bound of PLC variables setpoints. See all the examples in the test.db files for the absolute max and min HOPR and LOPR fields for the corresponding OPC UA data type.
 
 
-## Deafult compose environment variables:
+## Default compose environment variables:
 ```bash
 
 environment:
